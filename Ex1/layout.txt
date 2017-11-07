@@ -1,1 +1,102 @@
 here we will describe our solution
+
+Pay attention - the errors order matter !
+
+1)
+intitial input reading
+Roy
+
+2)
+checks
+Roy
+
+3)
+solve puzzle (do nothing)
+Adi
+
+4)testing
+?
+
+solve=
+1. 
+- put corners
+- put borders
+- solve by 3^2 equivelence classes (match top and left pieces) or 3^4 EC. (will figure it out)
+
+
+class piece
+int _id
+short _top
+short _bottom
+short _right
+short _left
+
+class erros
+string[] missingElements
+.
+.
+.
+
+String ToString()
+AddMissingElementError(String s)
+.
+.
+.
+
+class Board
+int _numOfElements
+piece*[] _allPieces  (owner)
+List<piece*> _cornerTL      // maybe use int indexes instead - if list frees the pointer
+List<piece*> _cornerTR
+List<piece*> _cornerBL
+List<piece*> _cornerBR
+
+List<piece*> _borderTop   // maybe use int indexes instead - if list frees the pointer
+List<piece*> _borderBottom
+List<piece*> _borderRight
+List<piece*> _borderLeft
+
+bool ReadBoard(string pathfile, errors& errorsOutput) // read file, fill EC (if used), fill special pieces (if not using EC), return any errors if known
+bool CheckBoard(errors& errors) // only if we couldnt do it while reading
+bool TrySolve(int h, int w) 
+
+
+class solution
+int _heigt
+int _width
+board* board
+piece*[][] puzzle
+List<const piece*> _remainingPieces  (in the future - if using EC - need privates for those)
+
+solution(const Board const& board, int h, int w)
+// when taking a piece use puzzle[i,j] << _remainingPieces (remove from remaining)
+// when returning a piece that does not match - use puzzle[i,j] >> _remainingPieces
+
+
+bool Solve()
+
+
+Slove(i,j)
+
+if i=hight && j=width
+{
+	for x in ...
+	{
+		if fits
+			return true;
+	}
+
+	return false;
+}
+
+for (x in _remainingPieces)
+ptr = x;
+if fits
+	puzzle[i,j] = ptr;
+              remove x from _remainingPieces
+
+	if (solve(i, j+1))
+		return true
+	else
+		return x to _remainingPieces
+
