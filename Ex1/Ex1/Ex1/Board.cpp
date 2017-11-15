@@ -1,39 +1,7 @@
-using namesapce std;
+#include "stdafx.h"
+#include "Board.h"
 
-class Board {
-	int n, sumOfEdges, numOfStraightEdges_r, numOfStraightEdges_l, numOfStraightEdges_t, numOfStraightEdges_b;
-	bool error;
-	vector<int> missingID;
-	vector<int> wrongID;
-	vector<int> wrongLineID;
-	vector<string> wrongLineString;
-	List<Piece*> cornerTL;
-	List<Piece*> cornerTR;
-	List<Piece*> cornerbL;
-	List<Piece*> cornerBR;
-	List<Piece*> borderTop;
-	List<Piece*> borderBottom;
-	List<Piece*> borderLeft;
-	List<Piece*> borderRight;
-public:
-	Board(int);
-	bool readBoard();
-	void setBoard();
-	void setCorners();
-	void setBorders();
-	bool[] hasCorners;
-};
-
-Board::Board(int n) {
-	this.n = n;
-	Piece*[] allPieces = new Piece*[n];
-	sumOfEdges = 0;
-	numOfStraightEdges_r = 0;
-	numOfStraightEdges_l = 0;
-	numOfStraightEdges_t = 0;
-	numOfStraightEdges_b = 0;
-	
-}
+/*
 void Board::readBoard() {
 	bool e;
 	string line;
@@ -151,3 +119,4 @@ bool * Board::hasCorners() {
 		bool[3] = true;
 	return corners;
 }
+*/
