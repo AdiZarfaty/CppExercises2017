@@ -24,7 +24,7 @@ class Board {
 	vector<int> wrongLineID;
 	vector<string> wrongLineString;
 
-	list<Piece*> cornerTL;
+	list<Piece*> cornerTL; //TODO: I think there is no need for TL,TR,T,L these are included in the EQ classes.. we should just write these
 	list<Piece*> cornerTR;
 	list<Piece*> cornerbL;
 	list<Piece*> cornerBR;
