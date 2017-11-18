@@ -31,7 +31,8 @@ class BoardErrors
 public:
 	BoardErrors(int);
 	~BoardErrors();
-	bool hasErrors();
-	void printErrors();
+	bool hasErrors() const;
+	void sortErrors();
+	void printErrors() const;
 };
 

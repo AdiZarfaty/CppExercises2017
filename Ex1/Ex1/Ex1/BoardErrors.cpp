@@ -16,17 +16,23 @@ BoardErrors::~BoardErrors()
 	wrongLineString.clear();
 }
 
-bool BoardErrors::hasErrors()
+bool BoardErrors::hasErrors() const
 {
 	return error;
 }
 
-void BoardErrors::printErrors()
+void BoardErrors::sortErrors()
 {
 	if (!missingID.empty()) {
 		sort(missingID.begin(), missingID.end());
+	}
+}
+
+void BoardErrors::printErrors() const
+{
+	if (!missingID.empty()) {
 		cout << "Missing puzzle element(s) with the following IDs: ";
-		for (vector<int>::iterator iter = missingID.begin(); iter != missingID.end(); iter++) {
+		for (vector<int>::const_iterator iter = missingID.begin(); iter != missingID.end(); iter++) {
 			if (iter != missingID.begin() && iter != missingID.end() - 1)
 				cout << ", ";
 			cout << *iter;
@@ -35,7 +41,7 @@ void BoardErrors::printErrors()
 	}
 	if (!wrongID.empty()) {
 		cout << "Puzzle of size " << m_numberOfPieces << " cannot have the following IDs: ";
-		for (vector<int>::iterator iter  = wrongID.begin(); iter != wrongID.end(); iter++) {
+		for (vector<int>::const_iterator iter  = wrongID.begin(); iter != wrongID.end(); iter++) {
 			if (iter != wrongID.begin() && iter != wrongID.end() - 1)
 				cout << ", ";
 			cout << *iter;

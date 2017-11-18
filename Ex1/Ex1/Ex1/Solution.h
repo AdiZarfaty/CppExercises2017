@@ -1,31 +1,35 @@
 #pragma once
-#include "Board.h"
 #include "Piece.h"
+#include "PieceEQClasses.h"
 #include <list>
 
 #include <string> //for debug
 #include <sstream> // for debug
 
+using std::string; // for debug
+
 using std::list;
 
 class Solution
 {
-	int m_heigt;
-	int m_width;
-	Board* m_board;
-	Piece** m_puzzleSolution; // a 1D array of pointers Piece* for ease of allocation. access to x,y will be via the getter getPiece
-	list<Piece*> m_remainingPieces; // this is the naive solution //TODO: change to EQ classes
+	const int m_heigt;
+	const int m_width;
 
-	Piece*& internalGetPiece(int line, int row)
+	Piece** m_puzzleSolution; // a 1D array of pointers Piece* for ease of allocation. access to x,y will be via the getter getPiece
+	//list<Piece*> m_remainingPieces; // this is the naive solution //TODO: change to EQ classes
+	const PieceEQClasses m_remainingPieces;
+
+	Piece*& internalGetPiecePtr(int line, int row) const
 	{
 		return m_puzzleSolution[line*m_heigt + row];
 	}
 
-	bool solve(int i, int j); // Solve the puzzle for i,j and onward.
+	// Solve the puzzle for i,j and onward. get a copy of the remaining pieces (by val)
+	bool solve(int i, int j, PieceEQClasses remainingPieces); 
 
 	string debugGetSolutionAsString(); // used for debug
 public:
-	Solution(int height, int width): m_heigt(height), m_width(width){
+	Solution(int height, int width, const PieceEQClasses& pieces): m_heigt(height), m_width(width), m_remainingPieces(pieces){
 
 		// setup an empty board
 		m_puzzleSolution = new Piece*[height * width];
@@ -33,7 +37,7 @@ public:
 		for (int i = 0; i < m_heigt; i++)
 		{
 			for (int j = 0; j < m_width; j++) {
-				internalGetPiece(i, j) = nullptr;
+				internalGetPiecePtr(i, j) = nullptr;
 			}
 		}
 	}
@@ -46,9 +50,16 @@ public:
 	bool solve(); // Solve the puzzle
 
 	// API to read the solution
-	const Piece* getPiece(int line, int row)
+	const Piece* getPiecePtr(int line, int row) const
 	{
-		return m_puzzleSolution[line*m_heigt + row];
+		if ((line < 0)
+			|| (line >= m_heigt)
+			|| (row < 0)
+			|| (row >= m_width)){
+			return nullptr;
+		}
+
+		return internalGetPiecePtr(line, row);
 	}
 };
 

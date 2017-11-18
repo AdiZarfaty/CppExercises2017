@@ -1,29 +1,28 @@
 #pragma once
 class Piece {
-	friend class Board;
-	int m_id;
-	short m_left; // -1 for a female edge, 0 for flat edge, 1 for male edge
-	short m_top;
-	short m_right;
-	short m_bottom;
+	const int m_id;
+	const short m_left; // -1 for a female edge, 0 for flat edge, 1 for male edge
+	const short m_top;
+	const short m_right;
+	const short m_bottom;
 public:
 	Piece(int id, short left, short top, short right, short bottom):
 		m_id(id), m_top(top), m_bottom(bottom), m_right(right), m_left(left){
 	}
 
-	int getId() {
+	int getId() const {
 		return m_id;
 	}
-	short getTop() {
+	short getTop() const {
 		return m_top;
 	}
-	short getBottom() {
+	short getBottom() const {
 		return m_bottom;
 	}
-	short getRight() {
+	short getRight() const {
 		return m_right;
 	}
-	short getLeft() {
+	short getLeft() const {
 		return m_left;
 	}
 };

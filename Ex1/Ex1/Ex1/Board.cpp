@@ -15,16 +15,16 @@ void Board::readBoard() {
 		ss >> id;
 		if (ss.good()) {
 			if (id < 1 || id > m_numberOfPieces) {
-				error.wrongID.push_back(id);
-				error.error = true;
+				m_error.wrongID.push_back(id);
+				m_error.error = true;
 			}
 			else
 				ids[id - 1]++;
 		}
 		else {
-			error.error = true;
-			error.wrongLineString.push_back(line);
-			error.wrongLineID.push_back(-1);
+			m_error.error = true;
+			m_error.wrongLineString.push_back(line);
+			m_error.wrongLineID.push_back(-1);
 			ss.clear();
 			ss.ignore();
 		}
@@ -33,85 +33,52 @@ void Board::readBoard() {
 			ss >> sides[j];
 			if (ss.good()) {
 				if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
-					error.error = true;
-					error.wrongLineID.push_back(id);
-					error.wrongLineString.push_back(line);
+					m_error.error = true;
+					m_error.wrongLineID.push_back(id);
+					m_error.wrongLineString.push_back(line);
 				}
 				else if (sides[j] == 0) {
 					switch (j) {
-					case 0: error.m_numOfStraightEdges_rl++;
-					case 1: error.m_numOfStraightEdges_tb++;
-					case 2: error.m_numOfStraightEdges_rl--;
-					case 3: error.m_numOfStraightEdges_tb--;
+					case 0: m_error.m_numOfStraightEdges_rl++;
+					case 1: m_error.m_numOfStraightEdges_tb++;
+					case 2: m_error.m_numOfStraightEdges_rl--;
+					case 3: m_error.m_numOfStraightEdges_tb--;
 					}
 				}
 				else {
-					error.m_sumOfEdges += sides[j];
+					m_error.m_sumOfEdges += sides[j];
 				}
 
 			}
 			else {
-				error.error = true;
-				error.wrongLineID.push_back(id);
-				error.wrongLineString.push_back(line);
+				m_error.error = true;
+				m_error.wrongLineID.push_back(id);
+				m_error.wrongLineString.push_back(line);
 				ss.clear();
 				ss.ignore();
 			}
 		}
 		if (!ss.eof()) {
-			error.error = true;
-			error.wrongLineID.push_back(id);
-			error.wrongLineString.push_back(line);
+			m_error.error = true;
+			m_error.wrongLineID.push_back(id);
+			m_error.wrongLineString.push_back(line);
 		}
-		if (!error.error) {
+		if (!m_error.error) {
 			m_allPieces[i] = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 		}
 	}
-	if (!error.error)
-		setEqualityClasses;
+
+	if (!m_error.error)
+	{
+		setEqualityClasses();
+	}
+	else
+	{
+		m_error.sortErrors();
+	}
 }
 void Board::setEqualityClasses() {
-	for (Piece *piece : m_allPieces) {
-		switch (piece->m_left) {
-		case -1:
-			switch (piece->m_top) {
-			case -1:
-				femaleFemale.push_back(piece);
-				break;
-			case 0:
-				femaleFlat.push_back(piece);
-				break;
-			case 1:
-				femaleMale.push_back(piece);
-				break;
-			}
-			break;
-		case 0:
-			switch (piece->m_top) {
-			case -1:
-				flatFemale.push_back(piece);
-				break;
-			case 0:
-				flatFlat.push_back(piece);
-				break;
-			case 1:
-				flatMale.push_back(piece);
-				break;
-			}
-			break;
-		case 1:
-			switch (piece->m_top) {
-			case -1:
-				maleFemale.push_back(piece);
-				break;
-			case 0:
-				maleFlat.push_back(piece);
-				break;
-			case 1:
-				maleMale.push_back(piece);
-				break;
-			}
-			break;
-		}
+	for (Piece *piecePtr : m_allPieces) {
+		m_eqClasses.getEQClass(piecePtr->getLeft(), piecePtr->getTop()).push_back(piecePtr);
 	}
 }
