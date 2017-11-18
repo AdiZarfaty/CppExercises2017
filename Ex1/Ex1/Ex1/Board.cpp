@@ -1,32 +1,30 @@
 #include "stdafx.h"
 #include "Board.h"
 
-/*
 void Board::readBoard() {
-	bool e;
 	string line;
 	int sides[4];
-	for (int i = 0; i < numElements; i++) {
-		if (e)
-			this->error = true;
-		e = false;
+	int id;
+	vector<int> ids(m_numberOfPieces);
+	for (int i = 0; i < m_numberOfPieces; i++) {
 
-		getLine(cin, line);
-		stringstream ss << line;
+		getline(cin, line);
+		stringstream ss;
+		ss << line;
 
 		ss >> id;
 		if (ss.good()) {
-			if (id < 1 || id > numElements) {
-				wrongID.push_back(id);
-				e = true;
+			if (id < 1 || id > m_numberOfPieces) {
+				error.wrongID.push_back(id);
+				error.error = true;
 			}
 			else
-				ids[id + 1]++;
+				ids[id - 1]++;
 		}
 		else {
-			e = true;
-			wrongLineString.push_back(line);
-			wrongLineID.push_back(-1);
+			error.error = true;
+			error.wrongLineString.push_back(line);
+			error.wrongLineID.push_back(-1);
 			ss.clear();
 			ss.ignore();
 		}
@@ -35,88 +33,85 @@ void Board::readBoard() {
 			ss >> sides[j];
 			if (ss.good()) {
 				if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
-					e = true;
-					wrongLineID.push_back(id);
-					wrongLineString.push_back(line);
+					error.error = true;
+					error.wrongLineID.push_back(id);
+					error.wrongLineString.push_back(line);
 				}
 				else if (sides[j] == 0) {
 					switch (j) {
-					case 0: numOfStraightEdges_l++;
-					case 1: numOfStraightEdges_t++;
-					case 2: numOfStraightEdges_r++;
-					case 3: numOfStraightEdges_b++;
+					case 0: error.m_numOfStraightEdges_rl++;
+					case 1: error.m_numOfStraightEdges_tb++;
+					case 2: error.m_numOfStraightEdges_rl--;
+					case 3: error.m_numOfStraightEdges_tb--;
 					}
 				}
 				else {
-					sumOfEdges += sides[j];
+					error.m_sumOfEdges += sides[j];
 				}
 
 			}
 			else {
-				e = true;
-				wrongLineID.push_back(id);
-				wrongLineString.push_back(line);
+				error.error = true;
+				error.wrongLineID.push_back(id);
+				error.wrongLineString.push_back(line);
 				ss.clear();
 				ss.ignore();
 			}
 		}
-		if (!e) {
-			board->allPieces[i] = &new Piece(id, left, top, right, bottom);
+		if (!ss.eof()) {
+			error.error = true;
+			error.wrongLineID.push_back(id);
+			error.wrongLineString.push_back(line);
+		}
+		if (!error.error) {
+			m_allPieces[i] = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 		}
 	}
-	setBoard();
+	if (!error.error)
+		setEqualityClasses;
 }
-void Board::setBoard() {
-	setCorners();
-	setBorders();
-	sort(missingID.begin(), missingID.end());
-}
-void Board::setCorners() {
-	Piece *piece;
-	for (int i = 0; i < this->n; i++) {
-		piece = this->allPieces[i];
-		if (piece->getLeft() == 0 && piece->getTop() == 0) {
-			cornetTL.push_back(piece);
-		}
-		if (piece->getright() == 0 && piece->getTop() == 0) {
-			cornetTR.push_back(piece);
-		}
-		if (piece->getLeft() == 0 && piece->getBottom() == 0) {
-			cornetBL.push_back(piece);
-		}
-		if (piece->getRight() == 0 && piece->getBottom() == 0) {
-			cornetBR.push_back(piece);
+void Board::setEqualityClasses() {
+	for (Piece *piece : m_allPieces) {
+		switch (piece->m_left) {
+		case -1:
+			switch (piece->m_top) {
+			case -1:
+				femaleFemale.push_back(piece);
+				break;
+			case 0:
+				femaleFlat.push_back(piece);
+				break;
+			case 1:
+				femaleMale.push_back(piece);
+				break;
+			}
+			break;
+		case 0:
+			switch (piece->m_top) {
+			case -1:
+				flatFemale.push_back(piece);
+				break;
+			case 0:
+				flatFlat.push_back(piece);
+				break;
+			case 1:
+				flatMale.push_back(piece);
+				break;
+			}
+			break;
+		case 1:
+			switch (piece->m_top) {
+			case -1:
+				maleFemale.push_back(piece);
+				break;
+			case 0:
+				maleFlat.push_back(piece);
+				break;
+			case 1:
+				maleMale.push_back(piece);
+				break;
+			}
+			break;
 		}
 	}
 }
-void Board::setBorders() {
-	Piece *piece;
-	for (int i = 0; i < this->n; i++) {
-		piece = this->allPieces[i];
-		if (piece->getLeft() == 0) {
-			borderLeft.push_back(piece);
-		}
-		if (piece->getright() == 0) {
-			borderRight.push_back(piece);
-		}
-		if (piece->getTop() == 0) {
-			borderTop.push_back(piece);
-		}
-		if (piece->getBottom() == 0) {
-			borderBottom.push_back(piece);
-		}
-	}
-}
-bool * Board::hasCorners() {
-	static bool corners[4];
-	if (!this.cornerTL.empty())
-		bool[0] = true;
-	if (!this.cornerTR.empty())
-		bool[1] = true;
-	if (!this.cornerBL.empty())
-		bool[2] = true;
-	if (!this.cornerBR.empty())
-		bool[3] = true;
-	return corners;
-}
-*/
