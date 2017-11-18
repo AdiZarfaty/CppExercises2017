@@ -8,6 +8,7 @@
 #include "Piece.h"
 #include "BoardErrors.h"
 #include "PieceEQClasses.h"
+#include "Solution.h"
 
 using std::vector;
 using std::string;
@@ -21,9 +22,14 @@ class Board {
 	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
 	PieceEQClasses m_eqClasses;
 	BoardErrors m_error;
+	Solution* m_solution;
+
+
+	void setEqualityClasses();
 public:
 	Board(int numberOfPieces): m_numberOfPieces(numberOfPieces), m_error(numberOfPieces){
 		m_allPieces.reserve(numberOfPieces);
+		m_solution = nullptr;
 	}
 
 	virtual ~Board() {
@@ -31,13 +37,17 @@ public:
 		for (Piece* piece : m_allPieces) {
 			delete piece;
 		}
+
+		delete m_solution;
 	}
 
-	void readBoard();
+	void readBoard(string filePath);
 
-	void setEqualityClasses();
+	bool solve();
 
-	const BoardErrors& getError() {
+	void writeResponseToFile(string filePath) const;
+
+	const BoardErrors& getError() const {
 		return m_error;
 	}
 };

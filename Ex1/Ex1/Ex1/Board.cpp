@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Board.h"
 
-void Board::readBoard() {
+void Board::readBoard(string filePath) {
 	string line;
 	int sides[4];
 	int id;
@@ -81,4 +81,56 @@ void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
 		m_eqClasses.getEQClass(piecePtr->getLeft(), piecePtr->getTop()).push_back(piecePtr);
 	}
+}
+
+bool Board::solve()
+{
+	int columns;
+	bool success = false;
+	bool numOfStraightEdgesWasOkAtLeastOnce = false;
+
+	for (int rows = 1; rows <= m_numberOfPieces; rows++)
+	{
+		if ((m_numberOfPieces % rows) > 0)
+		{
+			continue; // no such board exist
+		}
+
+		columns = m_numberOfPieces / rows;		
+
+		//TODO: check if we have the right number of straight edges of (rows x columns) soultion. need to change the info members in Board and BoardError
+		// num of TopBottom need to be >= columns*2 
+		// num of RightLeft need to be >= rows*2 
+		// this helps us avoid trying a solution for nothing and we are requiered to report it by note 6
+		if (true)
+		{
+			numOfStraightEdgesWasOkAtLeastOnce = true;
+
+			m_solution = new Solution(rows, columns, m_eqClasses);
+
+			success = m_solution->solve();
+
+			if (success)
+			{
+				break;
+			}
+			else
+			{
+				delete m_solution;
+				m_solution = nullptr;
+			}
+		}
+	}
+
+	if (!numOfStraightEdgesWasOkAtLeastOnce)
+	{
+		//TODO: report this error to BoardError. make sure the display comes after this
+	}
+
+	return success;
+}
+
+void Board::writeResponseToFile(string filePath) const
+{
+
 }

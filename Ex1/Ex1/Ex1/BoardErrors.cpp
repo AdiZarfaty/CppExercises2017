@@ -31,7 +31,7 @@ void BoardErrors::sortErrors()
 void BoardErrors::printErrors() const
 {
 	if (!missingID.empty()) {
-		cout << "Missing puzzle element(s) with the following IDs: ";
+		cout << "Missing puzzle element(s) with the following IDs: ";  //TODO: write should be to a file
 		for (vector<int>::const_iterator iter = missingID.begin(); iter != missingID.end(); iter++) {
 			if (iter != missingID.begin() && iter != missingID.end() - 1)
 				cout << ", ";

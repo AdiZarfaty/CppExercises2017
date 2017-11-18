@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardErrors.h" />
+    <ClInclude Include="Ex1.h" />
     <ClInclude Include="Piece.h" />
     <ClInclude Include="PieceEQClasses.h" />
     <ClInclude Include="Solution.h" />
