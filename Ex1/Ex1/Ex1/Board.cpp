@@ -67,7 +67,27 @@ void Board::readBoard() {
 				m_error.addWrongLine(id, line);
 			}
 			if (!m_error.hasErrors()) {
-				m_allPieces[i] = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
+
+				Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
+				m_allPieces[i] = newPiecePtr;
+
+				//TODO: not really good enough, to REALLY check this - need to save a list of all of the corners and check we can place them (3 pieces of square pass the test, but cant make corners with only 3)
+				if ((newPiecePtr->getTop() == 0) && (newPiecePtr->getLeft() == 0))
+				{
+					m_error.setCornerTLexist();
+				}
+				if ((newPiecePtr->getTop() == 0) && (newPiecePtr->getRight() == 0))
+				{
+					m_error.setCornerTRexist();
+				}
+				if ((newPiecePtr->getBottom() == 0) && (newPiecePtr->getLeft() == 0))
+				{
+					m_error.setCornerBLexist();
+				}
+				if ((newPiecePtr->getBottom() == 0) && (newPiecePtr->getRight() == 0))
+				{
+					m_error.setCornerBRexist();
+				}
 			}
 		}
 		m_inFile->close();
