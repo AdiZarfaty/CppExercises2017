@@ -69,4 +69,5 @@ void BoardErrors::printErrors(string filePath) const
 		outFile << "Cannot solve puzzle: missing corner element BR" << endl;
 	if(m_sumOfEdges != 0)
 		outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;
+	outFile.close();
 }

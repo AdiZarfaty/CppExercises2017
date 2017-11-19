@@ -90,7 +90,7 @@ void Board::readBoard(string inputFile, string outputFile) {
 				m_allPieces[i] = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 			}
 		}
-
+		inFile.close();
 		if (!m_error.error)
 		{
 			setEqualityClasses();
@@ -103,6 +103,7 @@ void Board::readBoard(string inputFile, string outputFile) {
 	else {
 		outFile << "ERROR: could not extract numElements";
 	}
+	outFile.close();
 }
 
 void Board::setEqualityClasses() {
