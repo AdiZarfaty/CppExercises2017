@@ -19,13 +19,12 @@ class BoardErrors
 	friend class Board;
 	int m_numberOfPieces;
 	int m_sumOfEdges;
-	int m_numOfStraightEdges_rl;
-	int m_numOfStraightEdges_tb;
 	bool error;
 	bool cornerTL;
 	bool cornerTR;
 	bool cornerBL;
 	bool cornerBR;
+	bool m_wrongNumberOfStraightEdges;
 	vector<int> missingID;
 	vector<int> wrongID;
 	vector<int> wrongLineID;

@@ -19,7 +19,7 @@ void Board::readBoard(string inputFile, string outputFile) {
 	stringstream ss;
 	getline(inFile, line, '=');
 	if (line != "NumElements") {
-		 outFile << "ERROR: first line is in a wrong format" << endl;  // TODO: Read should be from a file
+		 outFile << "ERROR: first line is in a wrong format" << endl;
 	}
 	int numElements; ss >> numElements;
 	if (ss.good()) {
@@ -62,10 +62,10 @@ void Board::readBoard(string inputFile, string outputFile) {
 					}
 					else if (sides[j] == 0) {
 						switch (j) {
-						case 0: m_error.m_numOfStraightEdges_rl++;
-						case 1: m_error.m_numOfStraightEdges_tb++;
-						case 2: m_error.m_numOfStraightEdges_rl--;
-						case 3: m_error.m_numOfStraightEdges_tb--;
+						case 0: m_numOfStraightEdges_rl++;
+						case 1: m_numOfStraightEdges_tb++;
+						case 2: m_numOfStraightEdges_rl++;
+						case 3: m_numOfStraightEdges_tb++;
 						}
 					}
 					else {
@@ -103,6 +103,15 @@ void Board::readBoard(string inputFile, string outputFile) {
 	else {
 		outFile << "ERROR: could not extract numElements";
 	}
+
+	// an odd number means no solution for sure
+	if (((m_numOfStraightEdges_rl % 2) > 0)
+		|| ((m_numOfStraightEdges_tb % 2) > 0))
+	{
+		m_error.m_wrongNumberOfStraightEdges = true;
+		m_error.error = true;
+	}
+
 	outFile.close();
 }
 
@@ -127,11 +136,9 @@ bool Board::solve(string filePath)
 
 		columns = m_numberOfPieces / rows;		
 
-		//TODO: check if we have the right number of straight edges of (rows x columns) soultion. need to change the info members in Board and BoardError
-		// num of TopBottom need to be >= columns*2 
-		// num of RightLeft need to be >= rows*2 
-		// this helps us avoid trying a solution for nothing and we are requiered to report it by note 6
-		if (true)
+		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
+		if ((m_numOfStraightEdges_rl >= (rows * 2))
+			&& (m_numOfStraightEdges_tb >= (columns * 2)))
 		{
 			numOfStraightEdgesWasOkAtLeastOnce = true;
 
@@ -153,7 +160,8 @@ bool Board::solve(string filePath)
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
 	{
-		//TODO: report this error to BoardError. make sure the display comes after this
+		m_error.m_wrongNumberOfStraightEdges = true;
+		m_error.error = true;
 	}
 
 	return success;

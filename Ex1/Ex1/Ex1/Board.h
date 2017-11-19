@@ -21,6 +21,8 @@ class Board {
 	PieceEQClasses m_eqClasses;
 	BoardErrors m_error;
 	Solution* m_solution;
+	int m_numOfStraightEdges_rl = 0;
+	int m_numOfStraightEdges_tb = 0;
 
 
 	void setEqualityClasses();

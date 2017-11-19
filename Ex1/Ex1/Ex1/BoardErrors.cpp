@@ -4,8 +4,7 @@
 BoardErrors::BoardErrors()
 {
 	m_sumOfEdges = 0;
-	m_numOfStraightEdges_rl = 0;
-	m_numOfStraightEdges_tb = 0;
+
 }
 
 BoardErrors::~BoardErrors()
@@ -34,7 +33,7 @@ void BoardErrors::printErrors(string filePath) const
 		exit(1); //check if we can use exit
 	}
 	if (!missingID.empty()) {
-		outFile << "Missing puzzle element(s) with the following IDs: ";  //TODO: write should be to a file
+		outFile << "Missing puzzle element(s) with the following IDs: ";
 		for (vector<int>::const_iterator iter = missingID.begin(); iter != missingID.end(); iter++) {
 			if (iter != missingID.begin() && iter != missingID.end() - 1)
 				outFile << ", ";
@@ -57,7 +56,7 @@ void BoardErrors::printErrors(string filePath) const
 		}
 		outFile << endl;
 	}
-	if (m_numOfStraightEdges_rl != 0 || m_numOfStraightEdges_tb != 0)
+	if (m_wrongNumberOfStraightEdges)
 		outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;
 	if(!cornerTL)
 		outFile << "Cannot solve puzzle: missing corner element TL" << endl;
