@@ -17,7 +17,7 @@ using std::ofstream;
 class BoardErrors
 {
 	friend class Board;
-	const int m_numberOfPieces;
+	int m_numberOfPieces;
 	int m_sumOfEdges;
 	int m_numOfStraightEdges_rl;
 	int m_numOfStraightEdges_tb;
@@ -31,7 +31,7 @@ class BoardErrors
 	vector<int> wrongLineID;
 	vector<string> wrongLineString;
 public:
-	BoardErrors(int);
+	BoardErrors();
 	~BoardErrors();
 	bool hasErrors() const;
 	void printErrors(string) const;

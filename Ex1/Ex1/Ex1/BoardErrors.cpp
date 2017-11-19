@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "BoardErrors.h"
 
-BoardErrors::BoardErrors(int numberOfPieces): m_numberOfPieces(numberOfPieces)
+BoardErrors::BoardErrors()
 {
 	m_sumOfEdges = 0;
 	m_numOfStraightEdges_rl = 0;
@@ -30,7 +30,7 @@ void BoardErrors::printErrors(string filePath) const
 	ofstream outFile;
 	outFile.open(filePath);
 	if (!outFile) {
-		cerr << "Unable to open output file " << filePath << endl;
+		cerr << "ERROR: Unable to open output file " << filePath << endl;
 		exit(1); //check if we can use exit
 	}
 	if (!missingID.empty()) {

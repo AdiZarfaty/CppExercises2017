@@ -16,7 +16,7 @@ using std::ifstream;
 using std::cerr;
 
 class Board {
-	const int m_numberOfPieces;
+	int m_numberOfPieces;
 	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
 	PieceEQClasses m_eqClasses;
 	BoardErrors m_error;
@@ -25,8 +25,7 @@ class Board {
 
 	void setEqualityClasses();
 public:
-	Board(int numberOfPieces): m_numberOfPieces(numberOfPieces), m_error(numberOfPieces){
-		m_allPieces.reserve(numberOfPieces);
+	Board(){
 		m_solution = nullptr;
 	}
 
@@ -39,11 +38,11 @@ public:
 		delete m_solution;
 	}
 
-	void readBoard(string filePath);
+	void readBoard(string, string);
 
-	bool solve();
+	bool solve(string);
 
-	void writeResponseToFile(string filePath);
+	void writeResponseToFile(string);
 
 	const BoardErrors& getError() const {
 		return m_error;
