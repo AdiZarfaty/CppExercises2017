@@ -1,25 +1,15 @@
 #include "stdafx.h"
 #include "Board.h"
 
-void Board::readBoard(string inputFile, string outputFile) {
-	ifstream inFile;
-	inFile.open(inputFile);
-	if (!inFile) {
-		cerr << "ERROR: Unable to open input file " << inputFile << endl;
-		exit(1); //check if we can use exit;
-	}
-	ofstream outFile;
-	outFile.open(outputFile);
-	if (!outFile) {
-		cerr << "ERROR: Unable to open output file " << outputFile << endl;
-		exit(1); //check if we can use exit
-	}
+void Board::readBoard() {
+
 	//read first line of file and extract numElements
 	string line;
 	stringstream ss;
-	getline(inFile, line, '=');
+	getline(*m_inFile, line, '=');
 	if (line != "NumElements") {
-		 outFile << "ERROR: first line is in a wrong format" << endl;
+		m_error.error = true;
+		m_error.firstLineIsInWrongFormat = true;
 	}
 	int numElements; ss >> numElements;
 	if (ss.good()) {
@@ -32,7 +22,7 @@ void Board::readBoard(string inputFile, string outputFile) {
 		vector<int> ids(m_numberOfPieces);
 		for (int i = 0; i < m_numberOfPieces; i++) {
 
-			getline(inFile, line);
+			getline(*m_inFile, line);
 			ss << line;
 
 			ss >> id;
@@ -90,7 +80,7 @@ void Board::readBoard(string inputFile, string outputFile) {
 				m_allPieces[i] = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 			}
 		}
-		inFile.close();
+		m_inFile->close();
 		if (!m_error.error)
 		{
 			setEqualityClasses();
@@ -101,7 +91,8 @@ void Board::readBoard(string inputFile, string outputFile) {
 		}
 	}
 	else {
-		outFile << "ERROR: could not extract numElements";
+		m_error.error = true;
+		m_error.couldNotExtractNumElements = true;
 	}
 
 	// an odd number means no solution for sure
@@ -111,8 +102,6 @@ void Board::readBoard(string inputFile, string outputFile) {
 		m_error.m_wrongNumberOfStraightEdges = true;
 		m_error.error = true;
 	}
-
-	outFile.close();
 }
 
 void Board::setEqualityClasses() {
@@ -121,8 +110,13 @@ void Board::setEqualityClasses() {
 	}
 }
 
-bool Board::solve(string filePath)
+bool Board::solve()
 {
+	if (m_error.hasErrors())
+	{
+		return false;
+	}
+
 	int columns;
 	bool success = false;
 	bool numOfStraightEdgesWasOkAtLeastOnce = false;
@@ -167,10 +161,33 @@ bool Board::solve(string filePath)
 	return success;
 }
 
-void Board::writeResponseToFile(string filePath)
+void Board::writeResponseToFile()
 {
 	if (m_error.error)
-		m_error.printErrors(filePath);
+	{
+		m_error.printErrors(*m_outFile);
+	}
 	else
-		solve(filePath);
+	{
+		if (m_solution == nullptr)
+		{
+			*m_outFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
+		}
+		else
+		{
+			for (int row = 0; row < (m_solution->getHeight()); row++)
+			{
+				for (int column = 0; column < (m_solution->getWidth()); column++)
+				{
+					*m_outFile << m_solution->getPiecePtr(row, column);
+					if (column < (m_solution->getWidth() - 1))
+					{
+						*m_outFile << " ";
+					}
+				}
+
+				*m_outFile << endl;
+			}
+		}
+	}
 }

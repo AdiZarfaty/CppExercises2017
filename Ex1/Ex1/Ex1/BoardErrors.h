@@ -16,10 +16,13 @@ using std::ofstream;
 
 class BoardErrors
 {
+//TODO: remove friend and check error messages compliance to instructions
 	friend class Board;
 	int m_numberOfPieces;
 	int m_sumOfEdges;
 	bool error;
+	bool firstLineIsInWrongFormat;
+	bool couldNotExtractNumElements;
 	bool cornerTL;
 	bool cornerTR;
 	bool cornerBL;
@@ -33,7 +36,7 @@ public:
 	BoardErrors();
 	~BoardErrors();
 	bool hasErrors() const;
-	void printErrors(string) const;
+	void printErrors(ofstream& outFile) const;
 	void sortErrors();
 };
 

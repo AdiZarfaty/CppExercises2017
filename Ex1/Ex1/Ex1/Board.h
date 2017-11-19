@@ -16,18 +16,20 @@ using std::ifstream;
 using std::cerr;
 
 class Board {
+	ifstream* m_inFile;
+	ofstream* m_outFile;
 	int m_numberOfPieces;
 	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
 	PieceEQClasses m_eqClasses;
 	BoardErrors m_error;
 	Solution* m_solution;
-	int m_numOfStraightEdges_rl = 0;
-	int m_numOfStraightEdges_tb = 0;
+	int m_numOfStraightEdges_rl = 0; // a counter for the number of striaght edges in Left and right
+	int m_numOfStraightEdges_tb = 0; // a counter for the number of striaght edges in Top and Bottom
 
-
+	// fill the EQClasses with the pieces
 	void setEqualityClasses();
 public:
-	Board(){
+	Board(ifstream* inFile, ofstream* outFile): m_inFile(inFile), m_outFile(outFile){
 		m_solution = nullptr;
 	}
 
@@ -40,14 +42,11 @@ public:
 		delete m_solution;
 	}
 
-	void readBoard(string, string);
+	void readBoard();
 
-	bool solve(string);
+	// Try to solve. if solution exist, put it in m_solution.
+	bool solve();
 
-	void writeResponseToFile(string);
-
-	const BoardErrors& getError() const {
-		return m_error;
-	}
+	void writeResponseToFile();
 };
 

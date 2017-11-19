@@ -24,14 +24,15 @@ void BoardErrors::sortErrors() {
 	sort(missingID.begin(), missingID.end());
 }
 
-void BoardErrors::printErrors(string filePath) const
+void BoardErrors::printErrors(ofstream& outFile) const
 {
-	ofstream outFile;
-	outFile.open(filePath);
-	if (!outFile) {
-		cerr << "ERROR: Unable to open output file " << filePath << endl;
-		exit(1); //check if we can use exit
+	if (firstLineIsInWrongFormat) {
+		outFile << "ERROR: first line is in a wrong format" << endl;
 	}
+	if (couldNotExtractNumElements){
+		outFile << "ERROR: could not extract numElements" << endl;
+	}
+
 	if (!missingID.empty()) {
 		outFile << "Missing puzzle element(s) with the following IDs: ";
 		for (vector<int>::const_iterator iter = missingID.begin(); iter != missingID.end(); iter++) {

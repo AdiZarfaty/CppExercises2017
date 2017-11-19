@@ -19,9 +19,9 @@ class Solution
 	//list<Piece*> m_remainingPieces; // this is the naive solution //TODO: change to EQ classes
 	const PieceEQClasses m_remainingPieces;
 
-	Piece*& internalGetPiecePtr(int line, int row) const
+	Piece*& internalGetPiecePtr(int row, int column) const
 	{
-		return m_puzzleSolution[line*m_heigt + row];
+		return m_puzzleSolution[row*m_heigt + column];
 	}
 
 	// Solve the puzzle for i,j and onward. get a copy of the remaining pieces (by val)
@@ -50,16 +50,26 @@ public:
 	bool solve(); // Solve the puzzle
 
 	// API to read the solution
-	const Piece* getPiecePtr(int line, int row) const
+	const Piece* getPiecePtr(int row, int column) const
 	{
-		if ((line < 0)
-			|| (line >= m_heigt)
-			|| (row < 0)
-			|| (row >= m_width)){
+		if ((row < 0)
+			|| (row >= m_heigt)
+			|| (column < 0)
+			|| (column >= m_width)){
 			return nullptr;
 		}
 
-		return internalGetPiecePtr(line, row);
+		return internalGetPiecePtr(row, column);
+	}
+
+	int getHeight() const
+	{
+		return m_heigt;
+	}
+
+	int getWidth() const
+	{
+		return m_width;
 	}
 };
 
