@@ -17,7 +17,6 @@ using std::ofstream;
 class BoardErrors
 {
 //TODO: remove friend and check error messages compliance to instructions
-	friend class Board;
 	int m_numberOfPieces = 0;
 	int m_sumOfEdges = 0;
 	bool m_error = false;
@@ -29,9 +28,9 @@ class BoardErrors
 	bool m_cornerBRexist = false;
 	bool m_wrongNumberOfStraightEdges = false;
 	vector<int> m_missingID; //TODO: never filled !
-	vector<int> m_wrongID; //TODO: what is wrong id ?
-	vector<int> m_wrongLineID; //TODO: what is ?
-	vector<string> m_wrongLineString; //TODO: what is ?
+	vector<int> m_wrongID; // ids that are not matching the m_numberOfPieces
+	vector<int> m_wrongLineID; // ids with error
+	vector<string> m_wrongLineString; // ids with error - original input line
 
 public:
 	bool hasErrors() const;
@@ -86,7 +85,7 @@ public:
 		m_error = true;
 	}
 
-	void addMissingID(int id)
+	void addMissingID(int id) //TODO: never called
 	{
 		m_missingID.push_back(id);
 		m_error = true;
@@ -96,14 +95,10 @@ public:
 		m_wrongID.push_back(id);
 		m_error = true;
 	}
-	void addWrongLineID(int id)
+	void addWrongLine(int id, string line)
 	{
 		m_wrongLineID.push_back(id);
-		m_error = true;
-	}
-	void addWrongLineString(string s)
-	{
-		m_wrongLineString.push_back(s);
+		m_wrongLineString.push_back(line);
 		m_error = true;
 	}
 

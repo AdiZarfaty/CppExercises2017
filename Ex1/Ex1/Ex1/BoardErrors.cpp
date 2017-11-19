@@ -38,7 +38,7 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		outFile << endl;
 	}
 	if (!m_wrongLineID.empty()) {
-		for (int i = 0; i<m_wrongLineID.size(); i++) {
+		for (unsigned int i = 0; i<m_wrongLineID.size(); i++) {
 			outFile << "Puzzle ID " << m_wrongLineID[i] << "has wrong data: " << m_wrongLineString[i];
 		}
 		outFile << endl;

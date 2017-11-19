@@ -27,16 +27,13 @@ void Board::readBoard() {
 			ss >> id;
 			if (ss.good()) {
 				if (id < 1 || id > m_numberOfPieces) {
-					m_error.m_wrongID.push_back(id);
-					m_error.m_error = true;
+					m_error.addWrongID(id);
 				}
 				else
 					ids[id - 1]++;
 			}
 			else {
-				m_error.m_error = true;
-				m_error.m_wrongLineString.push_back(line);
-				m_error.m_wrongLineID.push_back(-1);
+				m_error.addWrongLine(-1, line);
 				ss.clear();
 				ss.ignore();
 			}
@@ -45,9 +42,7 @@ void Board::readBoard() {
 				ss >> sides[j];
 				if (ss.good()) {
 					if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
-						m_error.m_error = true;
-						m_error.m_wrongLineID.push_back(id);
-						m_error.m_wrongLineString.push_back(line);
+						m_error.addWrongLine(id, line);
 					}
 					else if (sides[j] == 0) {
 						switch (j) {
@@ -63,24 +58,20 @@ void Board::readBoard() {
 
 				}
 				else {
-					m_error.m_error = true;
-					m_error.m_wrongLineID.push_back(id);
-					m_error.m_wrongLineString.push_back(line);
+					m_error.addWrongLine(id, line);
 					ss.clear();
 					ss.ignore();
 				}
 			}
 			if (!ss.eof()) {
-				m_error.m_error = true;
-				m_error.m_wrongLineID.push_back(id);
-				m_error.m_wrongLineString.push_back(line);
+				m_error.addWrongLine(id, line);
 			}
-			if (!m_error.m_error) {
+			if (!m_error.hasErrors()) {
 				m_allPieces[i] = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 			}
 		}
 		m_inFile->close();
-		if (!m_error.m_error)
+		if (!m_error.hasErrors())
 		{
 			setEqualityClasses();
 		}
@@ -90,16 +81,14 @@ void Board::readBoard() {
 		}
 	}
 	else {
-		m_error.m_error = true;
-		m_error.m_couldNotExtractNumElements = true;
+		m_error.setCouldNotExtractNumElements();
 	}
 
 	// an odd number means no solution for sure
 	if (((m_numOfStraightEdges_rl % 2) > 0)
 		|| ((m_numOfStraightEdges_tb % 2) > 0))
 	{
-		m_error.m_wrongNumberOfStraightEdges = true;
-		m_error.m_error = true;
+		m_error.setWrongNumberOfStraightEdges();
 	}
 }
 
@@ -153,8 +142,7 @@ bool Board::solve()
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
 	{
-		m_error.m_wrongNumberOfStraightEdges = true;
-		m_error.m_error = true;
+		m_error.setWrongNumberOfStraightEdges();
 	}
 
 	return success;
@@ -162,7 +150,7 @@ bool Board::solve()
 
 void Board::writeResponseToFile()
 {
-	if (m_error.m_error)
+	if (m_error.hasErrors())
 	{
 		m_error.printErrors(*m_outFile);
 	}
