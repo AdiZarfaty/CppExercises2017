@@ -3,14 +3,16 @@
 #include <string>
 #include <iterator>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 
 using std::vector;
 using std::string;
-using std::cout;
+using std::cerr;
 using std::endl;
 using std::iterator;
 using std::sort;
+using std::ofstream;
 
 class BoardErrors
 {
@@ -32,7 +34,7 @@ public:
 	BoardErrors(int);
 	~BoardErrors();
 	bool hasErrors() const;
+	void printErrors(string) const;
 	void sortErrors();
-	void printErrors() const;
 };
 

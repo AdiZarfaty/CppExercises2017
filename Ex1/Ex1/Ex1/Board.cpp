@@ -2,14 +2,23 @@
 #include "Board.h"
 
 void Board::readBoard(string filePath) {
+	ifstream inFile;
+	inFile.open(filePath);
+	if (!inFile) {
+		cerr << "Unable to open input file " << filePath << endl;
+		exit(1); //check if we can use exit;
+	}
+	//read first line of file and extract numElements
 	string line;
+	stringstream ss;
+
+	//read the rest of the file and create the board
 	int sides[4];
 	int id;
 	vector<int> ids(m_numberOfPieces);
 	for (int i = 0; i < m_numberOfPieces; i++) {
 
-		getline(cin, line);
-		stringstream ss;
+		getline(inFile, line);
 		ss << line;
 
 		ss >> id;
@@ -77,6 +86,7 @@ void Board::readBoard(string filePath) {
 		m_error.sortErrors();
 	}
 }
+
 void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
 		m_eqClasses.getEQClass(piecePtr->getLeft(), piecePtr->getTop()).push_back(piecePtr);
@@ -130,7 +140,10 @@ bool Board::solve()
 	return success;
 }
 
-void Board::writeResponseToFile(string filePath) const
+void Board::writeResponseToFile(string filePath)
 {
-
+	if (m_error.error)
+		m_error.printErrors(filePath);
+	else
+		solve();
 }

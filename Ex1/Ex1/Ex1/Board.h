@@ -1,9 +1,6 @@
 #pragma 
 
-#include <iostream>
-#include <string>
 #include <sstream>
-#include <vector>
 #include <list>
 #include "Piece.h"
 #include "BoardErrors.h"
@@ -15,7 +12,8 @@ using std::string;
 using std::list;
 using std::getline;
 using std::stringstream;
-using std::cin;
+using std::ifstream;
+using std::cerr;
 
 class Board {
 	const int m_numberOfPieces;
@@ -45,7 +43,7 @@ public:
 
 	bool solve();
 
-	void writeResponseToFile(string filePath) const;
+	void writeResponseToFile(string filePath);
 
 	const BoardErrors& getError() const {
 		return m_error;
