@@ -10,8 +10,10 @@ void Board::readBoard() {
 	if (line != "NumElements") {
 		m_error.setFirstLineIsInWrongFormat();
 	}
-	int numElements; ss >> numElements;
-	if (ss.good()) {
+	int numElements;
+	(*m_inFile) >> numElements;
+	if ((*m_inFile).good()) { //got the number
+		(*m_inFile).ignore(); // finish the first line
 		m_numberOfPieces = numElements;
 		m_allPieces.reserve(numElements);
 		m_error.setNumberOfPieces(numElements);
