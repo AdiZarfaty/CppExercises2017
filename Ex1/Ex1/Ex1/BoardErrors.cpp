@@ -1,71 +1,57 @@
 #include "stdafx.h"
 #include "BoardErrors.h"
 
-BoardErrors::BoardErrors()
-{
-	m_sumOfEdges = 0;
-
-}
-
-BoardErrors::~BoardErrors()
-{
-	missingID.clear();
-	wrongID.clear();
-	wrongLineID.clear();
-	wrongLineString.clear();
-}
-
 bool BoardErrors::hasErrors() const
 {
-	return error;
+	return m_error || (!m_cornerTLexist) || (!m_cornerTRexist) || (!m_cornerBLexist) || (!m_cornerBRexist);
 }
 
 void BoardErrors::sortErrors() {
-	sort(missingID.begin(), missingID.end());
+	sort(m_missingID.begin(), m_missingID.end());
 }
 
 void BoardErrors::printErrors(ofstream& outFile) const
 {
-	if (firstLineIsInWrongFormat) {
+	if (m_firstLineIsInWrongFormat) {
 		outFile << "ERROR: first line is in a wrong format" << endl;
 	}
-	if (couldNotExtractNumElements){
+	if (m_couldNotExtractNumElements){
 		outFile << "ERROR: could not extract numElements" << endl;
 	}
 
-	if (!missingID.empty()) {
+	if (!m_missingID.empty()) {
 		outFile << "Missing puzzle element(s) with the following IDs: ";
-		for (vector<int>::const_iterator iter = missingID.begin(); iter != missingID.end(); iter++) {
-			if (iter != missingID.begin() && iter != missingID.end() - 1)
+		for (vector<int>::const_iterator iter = m_missingID.begin(); iter != m_missingID.end(); iter++) {
+			if (iter != m_missingID.begin() && iter != m_missingID.end() - 1)
 				outFile << ", ";
 			outFile << *iter;
 		}
 		outFile << endl;
 	}
-	if (!wrongID.empty()) {
+	if (!m_wrongID.empty()) {
 		outFile << "Puzzle of size " << m_numberOfPieces << " cannot have the following IDs: ";
-		for (vector<int>::const_iterator iter  = wrongID.begin(); iter != wrongID.end(); iter++) {
-			if (iter != wrongID.begin() && iter != wrongID.end() - 1)
+		for (vector<int>::const_iterator iter  = m_wrongID.begin(); iter != m_wrongID.end(); iter++) {
+			if (iter != m_wrongID.begin() && iter != m_wrongID.end() - 1)
 				outFile << ", ";
 			outFile << *iter;
 		}
 		outFile << endl;
 	}
-	if (!wrongLineID.empty()) {
-		for (int i = 0; i<wrongLineID.size(); i++) {
-			outFile << "Puzzle ID " << wrongLineID[i] << "has wrong data: " << wrongLineString[i];
+	if (!m_wrongLineID.empty()) {
+		for (int i = 0; i<m_wrongLineID.size(); i++) {
+			outFile << "Puzzle ID " << m_wrongLineID[i] << "has wrong data: " << m_wrongLineString[i];
 		}
 		outFile << endl;
 	}
 	if (m_wrongNumberOfStraightEdges)
 		outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;
-	if(!cornerTL)
+	if(!m_cornerTLexist)
 		outFile << "Cannot solve puzzle: missing corner element TL" << endl;
-	if (!cornerTR)
+	if (!m_cornerTRexist)
 		outFile << "Cannot solve puzzle: missing corner element TR" << endl;
-	if (!cornerBL)
+	if (!m_cornerBLexist)
 		outFile << "Cannot solve puzzle: missing corner element BL" << endl;
-	if (!cornerBR)
+	if (!m_cornerBRexist)
 		outFile << "Cannot solve puzzle: missing corner element BR" << endl;
 	if(m_sumOfEdges != 0)
 		outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;
