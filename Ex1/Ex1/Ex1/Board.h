@@ -23,8 +23,10 @@ class Board {
 	PieceEQClasses m_eqClasses;
 	BoardErrors m_error;
 	Solution* m_solution;
-	int m_numOfStraightEdges_rl = 0; // a counter for the number of striaght edges in Left and right
-	int m_numOfStraightEdges_tb = 0; // a counter for the number of striaght edges in Top and Bottom
+	int m_numOfStraightEdges_right = 0;
+	int m_numOfStraightEdges_left = 0;
+	int m_numOfStraightEdges_top = 0;
+	int m_numOfStraightEdges_bottom = 0; 
 
 	// fill the EQClasses with the pieces
 	void setEqualityClasses();
@@ -43,7 +45,7 @@ public:
 	}
 
 	void readBoard();
-
+	void checkCorner(Piece *piece);
 	// Try to solve. if solution exist, put it in m_solution.
 	bool solve();
 

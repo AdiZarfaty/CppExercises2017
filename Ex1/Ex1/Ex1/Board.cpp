@@ -30,9 +30,15 @@ void Board::readBoard() {
 			if (ss.good()) {
 				if (id < 1 || id > m_numberOfPieces) {
 					m_error.addWrongID(id);
+					continue;
 				}
-				else
+				else {
 					ids[id - 1]++;
+					if (ids[id - 1] > 1) {
+						m_error.addDuplicateID(i + 1);
+						continue;
+					}
+				}
 			}
 			else {
 				m_error.addWrongLine(-1, line);
@@ -48,10 +54,10 @@ void Board::readBoard() {
 					}
 					else if (sides[j] == 0) {
 						switch (j) {
-						case 0: m_numOfStraightEdges_rl++;
-						case 1: m_numOfStraightEdges_tb++;
-						case 2: m_numOfStraightEdges_rl++;
-						case 3: m_numOfStraightEdges_tb++;
+						case 0: m_numOfStraightEdges_left++;
+						case 1: m_numOfStraightEdges_top++;
+						case 2: m_numOfStraightEdges_right++;
+						case 3: m_numOfStraightEdges_bottom++;
 						}
 					}
 					else {
@@ -72,27 +78,21 @@ void Board::readBoard() {
 
 				Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 				m_allPieces[i] = newPiecePtr;
-
-				//TODO: not really good enough, to REALLY check this - need to save a list of all of the corners and check we can place them (3 pieces of square pass the test, but cant make corners with only 3)
-				if ((newPiecePtr->getTop() == 0) && (newPiecePtr->getLeft() == 0))
-				{
-					m_error.setCornerTLexist();
-				}
-				if ((newPiecePtr->getTop() == 0) && (newPiecePtr->getRight() == 0))
-				{
-					m_error.setCornerTRexist();
-				}
-				if ((newPiecePtr->getBottom() == 0) && (newPiecePtr->getLeft() == 0))
-				{
-					m_error.setCornerBLexist();
-				}
-				if ((newPiecePtr->getBottom() == 0) && (newPiecePtr->getRight() == 0))
-				{
-					m_error.setCornerBRexist();
-				}
+				checkCorner(newPiecePtr);
 			}
 		}
 		m_inFile->close();
+		//check for errors
+		if (m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 || m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0)
+			m_error.setWrongNumberOfStraightEdges();
+		if (m_error.sumOfEdges() != 0)
+			m_error.setWrongSumOfEdges();
+		for (int i = 0; i < m_numberOfPieces; i++) {
+			if (ids[i] == 0) {
+				m_error.addMissingID(i + 1);
+			}
+		}
+
 		if (!m_error.hasErrors())
 		{
 			setEqualityClasses();
@@ -105,13 +105,17 @@ void Board::readBoard() {
 	else {
 		m_error.setCouldNotExtractNumElements();
 	}
+}
 
-	// an odd number means no solution for sure
-	if (((m_numOfStraightEdges_rl % 2) > 0)
-		|| ((m_numOfStraightEdges_tb % 2) > 0))
-	{
-		m_error.setWrongNumberOfStraightEdges();
-	}
+void Board::checkCorner(Piece* piece) {
+	if (piece->getBottom() == 0 && piece->getRight() == 0)
+		m_error.setCornerBRexist();
+	if (piece->getTop() == 0 && piece->getRight() == 0)
+		m_error.setCornerTRexist();
+	if (piece->getBottom() == 0 && piece->getLeft() == 0)
+		m_error.setCornerBLexist();
+	if (piece->getTop() == 0 && piece->getLeft() == 0)
+		m_error.setCornerTLexist();
 }
 
 void Board::setEqualityClasses() {
@@ -141,8 +145,8 @@ bool Board::solve()
 		columns = m_numberOfPieces / rows;		
 
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
-		if ((m_numOfStraightEdges_rl >= (rows * 2))
-			&& (m_numOfStraightEdges_tb >= (columns * 2)))
+		if ((m_numOfStraightEdges_right >= (rows * 2))
+			&& (m_numOfStraightEdges_top >= (columns * 2)))
 		{
 			numOfStraightEdgesWasOkAtLeastOnce = true;
 

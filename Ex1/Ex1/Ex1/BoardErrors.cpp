@@ -53,7 +53,9 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		outFile << "Cannot solve puzzle: missing corner element BL" << endl;
 	if (!m_cornerBRexist)
 		outFile << "Cannot solve puzzle: missing corner element BR" << endl;
-	if(m_sumOfEdges != 0)
+	if(m_wrongSumOfEdges)
 		outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;
+	if (!m_duplicateID.empty())
+		outFile << "ERROR: duplicate ID" << endl; //TODO: check the proper massage
 	outFile.close();
 }

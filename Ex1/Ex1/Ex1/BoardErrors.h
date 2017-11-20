@@ -16,18 +16,19 @@ using std::ofstream;
 
 class BoardErrors
 {
-//TODO: remove friend and check error messages compliance to instructions
 	int m_numberOfPieces = 0;
 	int m_sumOfEdges = 0;
 	bool m_error = false;
 	bool m_firstLineIsInWrongFormat = false;
+	bool m_wrongSumOfEdges = false;
 	bool m_couldNotExtractNumElements = false;
 	bool m_cornerTLexist = false; //TODO: these was never filled in readboard!
 	bool m_cornerTRexist = false;
 	bool m_cornerBLexist = false;
 	bool m_cornerBRexist = false;
 	bool m_wrongNumberOfStraightEdges = false;
-	vector<int> m_missingID; //TODO: never filled !
+	vector<int> m_duplicateID;
+	vector<int> m_missingID;
 	vector<int> m_wrongID; // ids that are not matching the m_numberOfPieces
 	vector<int> m_wrongLineID; // ids with error
 	vector<string> m_wrongLineString; // ids with error - original input line
@@ -36,7 +37,6 @@ public:
 	bool hasErrors() const;
 	void printErrors(ofstream& outFile) const;
 	void sortErrors();
-
 	void setNumberOfPieces(int num)
 	{
 		m_numberOfPieces = num;
@@ -45,6 +45,11 @@ public:
 	int& sumOfEdges()
 	{
 		return m_sumOfEdges;
+	}
+
+	void setWrongSumOfEdges() {
+		m_wrongSumOfEdges = true;
+		m_error = true;
 	}
 
 	void setFirstLineIsInWrongFormat()
@@ -99,6 +104,12 @@ public:
 	{
 		m_wrongLineID.push_back(id);
 		m_wrongLineString.push_back(line);
+		m_error = true;
+	}
+
+	void addDuplicateID(int id)
+	{
+		m_duplicateID.push_back(id);
 		m_error = true;
 	}
 
