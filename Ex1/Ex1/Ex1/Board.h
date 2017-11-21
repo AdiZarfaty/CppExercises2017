@@ -14,6 +14,7 @@ using std::getline;
 using std::stringstream;
 using std::ifstream;
 using std::cerr;
+using std::to_string;
 
 class Board {
 	ifstream* m_inFile;

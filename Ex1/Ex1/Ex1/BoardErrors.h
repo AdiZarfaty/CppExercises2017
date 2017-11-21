@@ -13,7 +13,6 @@ using std::endl;
 using std::iterator;
 using std::sort;
 using std::ofstream;
-//TODO: treat duplicate as wrongLine
 class BoardErrors
 {
 	int m_numberOfPieces = 0;
@@ -28,7 +27,8 @@ class BoardErrors
 	bool m_cornerBRexist = false;
 	bool m_wrongNumberOfStraightEdges = false;
 	vector<int> m_missingID;
-	vector<int> m_wrongID; // ids that are not matching the m_numberOfPieces //TODO: change to string 
+	vector<int> m_wrongID; // ids that are not matching the m_numberOfPieces
+	vector<string> m_nonIntID;
 	vector<int> m_wrongLineID; // ids with error
 	vector<string> m_wrongLineString; // ids with error - original input line
 
@@ -100,18 +100,16 @@ public:
 		m_wrongID.push_back(id);
 		m_error = true;
 	}
+	void addNonIntID(string id)
+	{
+		m_nonIntID.push_back(id);
+		m_error = true;
+	}
 	void addWrongLine(int id, string line)
 	{
 		m_wrongLineID.push_back(id);
 		m_wrongLineString.push_back(line);
 		m_error = true;
 	}
-
-	void addDuplicateID(int id)
-	{
-		m_duplicateID.push_back(id);
-		m_error = true;
-	}
-
 };
 

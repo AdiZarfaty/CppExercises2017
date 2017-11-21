@@ -37,7 +37,7 @@ void Board::readBoard() {
 				else {
 					ids[id - 1]++;
 					if (ids[id - 1] > 1) {
-						//m_error.addDuplicateID(i + 1);
+						m_error.addWrongLine(id, line);
 						continue;
 					}
 				}
@@ -46,6 +46,7 @@ void Board::readBoard() {
 					if (!ss.fail()) {
 						if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
 							m_error.addWrongLine(id, line);
+							continue;
 						}
 						else if (sides[j] == 0) {
 							switch (j) {
@@ -61,17 +62,17 @@ void Board::readBoard() {
 						else {
 							m_error.sumOfEdges() += sides[j];
 						}
-						if (j == 3)
+						if (j == 3 && ss.eof())
 							setCorner(sides[0], sides[1], sides[2], sides[3]);
 					}
 					else {
 						m_error.addWrongLine(id, line);
-						ss.clear();
-						ss.ignore();
+						continue;
 					}
 				}
 				if (!ss.eof()) {
 					m_error.addWrongLine(id, line);
+					continue;
 				}
 				if (!m_error.hasErrors()) {
 					Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
@@ -79,10 +80,15 @@ void Board::readBoard() {
 				}
 			}
 			else {
-				m_error.addWrongLine(-1, line); //TODO: change -1 to string
-				ss.clear();
-				ss.ignore();
-
+				ss = stringstream(line);
+				string id_str; ss >> id_str;
+				if (!ss.fail()) {
+					m_error.addNonIntID(id_str);
+				}
+				else {
+					m_error.addWrongLine(-1, line);
+				}
+				continue;
 			}
 		}
 		m_inFile->close();

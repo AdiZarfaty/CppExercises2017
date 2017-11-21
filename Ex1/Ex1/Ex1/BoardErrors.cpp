@@ -47,14 +47,23 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		}
 		outFile << endl;
 	}
+	if (!m_nonIntID.empty()) {
+		outFile << "Puzzle of size cannot have the following non integer IDs: ";
+		for (vector<string>::const_iterator iter = m_nonIntID.begin(); iter != m_nonIntID.end(); iter++) {
+			if (iter != m_nonIntID.begin())
+				outFile << ", ";
+			outFile << *iter;
+		}
+		outFile << endl;
+	}
 	if (!m_wrongLineID.empty()) {
 		for (unsigned int i = 0; i < m_wrongLineID.size(); i++) {
 			outFile << "Puzzle ID " << m_wrongLineID[i] << " has wrong data: " << m_wrongLineString[i];
 			outFile << endl;
 		}
 	}
-	//TODO: print only if no wrong data
-	if (m_wrongNumberOfStraightEdges)
+	if (m_wrongNumberOfStraightEdges && m_wrongID.empty() && m_nonIntID.empty()
+		&& m_wrongLineID.empty())
 		outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;
 	if(!m_cornerTLexist)
 		outFile << "Cannot solve puzzle: missing corner element TL" << endl;
@@ -64,7 +73,8 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		outFile << "Cannot solve puzzle: missing corner element BL" << endl;
 	if (!m_cornerBRexist)
 		outFile << "Cannot solve puzzle: missing corner element BR" << endl;
-	if(m_wrongSumOfEdges)
+	if(m_wrongSumOfEdges && m_wrongID.empty() && m_nonIntID.empty()
+		&& m_wrongLineID.empty())
 		outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;
 	outFile.close();
 }
