@@ -53,6 +53,7 @@ void BoardErrors::printErrors(ofstream& outFile) const
 			outFile << endl;
 		}
 	}
+	//TODO: print only if no wrong data
 	if (m_wrongNumberOfStraightEdges)
 		outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;
 	if(!m_cornerTLexist)
@@ -65,7 +66,5 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		outFile << "Cannot solve puzzle: missing corner element BR" << endl;
 	if(m_wrongSumOfEdges)
 		outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;
-	if (!m_duplicateID.empty())
-		outFile << "ERROR: duplicate ID" << endl; //TODO: check the proper massage
 	outFile.close();
 }

@@ -41,48 +41,48 @@ void Board::readBoard() {
 						continue;
 					}
 				}
-			}
-			else {
-				m_error.addWrongLine(-1, line);
-				ss.clear();
-				ss.ignore();
-			}
-
-			for (int j = 0; j < 4; j++) {
-				ss >> sides[j];
-				if (!ss.fail()) {
-					if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
-						m_error.addWrongLine(id, line);
-					}
-					else if (sides[j] == 0) {
-						switch (j) {
-						case 0: m_numOfStraightEdges_left++;
-							break;
-						case 1: m_numOfStraightEdges_top++;
-							break;
-						case 2: m_numOfStraightEdges_right++;
-							break;
-						case 3: m_numOfStraightEdges_bottom++;
+				for (int j = 0; j < 4; j++) {
+					ss >> sides[j];
+					if (!ss.fail()) {
+						if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
+							m_error.addWrongLine(id, line);
 						}
+						else if (sides[j] == 0) {
+							switch (j) {
+							case 0: m_numOfStraightEdges_left++;
+								break;
+							case 1: m_numOfStraightEdges_top++;
+								break;
+							case 2: m_numOfStraightEdges_right++;
+								break;
+							case 3: m_numOfStraightEdges_bottom++;
+							}
+						}
+						else {
+							m_error.sumOfEdges() += sides[j];
+						}
+						if (j == 3)
+							setCorner(sides[0], sides[1], sides[2], sides[3]);
 					}
 					else {
-						m_error.sumOfEdges() += sides[j];
+						m_error.addWrongLine(id, line);
+						ss.clear();
+						ss.ignore();
 					}
-					if(j==3)
-						setCorner(sides[0], sides[1], sides[2], sides[3]);
 				}
-				else {
+				if (!ss.eof()) {
 					m_error.addWrongLine(id, line);
-					ss.clear();
-					ss.ignore();
+				}
+				if (!m_error.hasErrors()) {
+					Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
+					m_allPieces.push_back(newPiecePtr);
 				}
 			}
-			if (!ss.eof()) {
-				m_error.addWrongLine(id, line);
-			}
-			if (!m_error.hasErrors()) {
-				Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
-				m_allPieces.push_back(newPiecePtr);
+			else {
+				m_error.addWrongLine(-1, line); //TODO: change -1 to string
+				ss.clear();
+				ss.ignore();
+
 			}
 		}
 		m_inFile->close();
