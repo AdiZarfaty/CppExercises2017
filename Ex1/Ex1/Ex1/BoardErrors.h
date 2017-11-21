@@ -16,7 +16,7 @@ using std::ofstream;
 class BoardErrors
 {
 	int m_numberOfPieces = 0;
-	int m_sumOfEdges = 0;
+	int m_sumOfEdges = 0; //TODO: move to board
 	bool m_error = false;
 	bool m_firstLineIsInWrongFormat = false;
 	bool m_wrongSumOfEdges = false;
