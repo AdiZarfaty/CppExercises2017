@@ -88,7 +88,8 @@ void Board::readBoard() {
 		m_inFile->close();
 		//check for errors
 		m_error.checkCorners();
-		if (m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 || m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0)
+		if (m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 
+			|| m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0)
 			m_error.setWrongNumberOfStraightEdges();
 		if (m_error.sumOfEdges() != 0)
 			m_error.setWrongSumOfEdges();
