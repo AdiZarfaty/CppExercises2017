@@ -167,7 +167,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test1.in" />
+    <None Include="expectedOutput_1-2_3-4.in" />
     <None Include="test1.out" />
     <None Include="test2.in" />
     <None Include="test2.out" />

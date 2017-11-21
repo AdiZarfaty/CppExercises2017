@@ -64,9 +64,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test1.in">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="test1.out">
       <Filter>Resource Files</Filter>
     </None>
@@ -86,6 +83,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="test4.out">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="expectedOutput_1-2_3-4.in">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
