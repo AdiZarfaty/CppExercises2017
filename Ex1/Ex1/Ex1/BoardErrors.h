@@ -35,6 +35,7 @@ class BoardErrors
 
 public:
 	bool hasErrors() const;
+	bool checkCorners();
 	void printErrors(ofstream& outFile) const;
 	void sortErrors();
 	void setNumberOfPieces(int num)

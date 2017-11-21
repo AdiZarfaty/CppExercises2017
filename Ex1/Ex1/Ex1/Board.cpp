@@ -1,4 +1,4 @@
-#include "stdafx.h"
+	#include "stdafx.h"
 #include "Board.h"
 
 void Board::readBoard() {
@@ -7,13 +7,15 @@ void Board::readBoard() {
 	string line;
 	stringstream ss;
 	getline(*m_inFile, line, '=');
+	ss = stringstream(line);
+	ss >> line;
 	if (line != "NumElements") {
 		m_error.setFirstLineIsInWrongFormat();
 	}
-	int numElements;
-	(*m_inFile) >> numElements;
-	if ((*m_inFile).good()) { //got the number
-		(*m_inFile).ignore(); // finish the first line
+	getline(*m_inFile, line);
+	ss = stringstream(line);
+	int numElements; ss >> numElements;
+	if (!ss.fail()) { //got the number
 		m_numberOfPieces = numElements;
 		m_allPieces.reserve(numElements);
 		m_error.setNumberOfPieces(numElements);
@@ -24,10 +26,10 @@ void Board::readBoard() {
 		for (int i = 0; i < m_numberOfPieces; i++) {
 
 			getline(*m_inFile, line);
-			ss << line;
+			ss = stringstream(line);
 
 			ss >> id;
-			if (ss.good()) {
+			if (!ss.fail()) {
 				if (id < 1 || id > m_numberOfPieces) {
 					m_error.addWrongID(id);
 					continue;
@@ -48,15 +50,18 @@ void Board::readBoard() {
 
 			for (int j = 0; j < 4; j++) {
 				ss >> sides[j];
-				if (ss.good()) {
+				if (!ss.fail()) {
 					if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
 						m_error.addWrongLine(id, line);
 					}
 					else if (sides[j] == 0) {
 						switch (j) {
 						case 0: m_numOfStraightEdges_left++;
+							break;
 						case 1: m_numOfStraightEdges_top++;
+							break;
 						case 2: m_numOfStraightEdges_right++;
+							break;
 						case 3: m_numOfStraightEdges_bottom++;
 						}
 					}
@@ -77,12 +82,13 @@ void Board::readBoard() {
 			if (!m_error.hasErrors()) {
 
 				Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
-				m_allPieces[i] = newPiecePtr;
-				checkCorner(newPiecePtr);
+				setCorner(newPiecePtr);
+				m_allPieces.push_back(newPiecePtr);
 			}
 		}
 		m_inFile->close();
 		//check for errors
+		m_error.checkCorners();
 		if (m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 || m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0)
 			m_error.setWrongNumberOfStraightEdges();
 		if (m_error.sumOfEdges() != 0)
@@ -107,7 +113,7 @@ void Board::readBoard() {
 	}
 }
 
-void Board::checkCorner(Piece* piece) {
+void Board::setCorner(Piece* piece) {
 	if (piece->getBottom() == 0 && piece->getRight() == 0)
 		m_error.setCornerBRexist();
 	if (piece->getTop() == 0 && piece->getRight() == 0)
@@ -145,8 +151,8 @@ bool Board::solve()
 		columns = m_numberOfPieces / rows;		
 
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
-		if ((m_numOfStraightEdges_right >= (rows * 2))
-			&& (m_numOfStraightEdges_top >= (columns * 2)))
+		if ((m_numOfStraightEdges_right >= (rows))
+			&& (m_numOfStraightEdges_top >= (columns)))
 		{
 			numOfStraightEdgesWasOkAtLeastOnce = true;
 
@@ -192,7 +198,7 @@ void Board::writeResponseToFile()
 			{
 				for (int column = 0; column < (m_solution->getWidth()); column++)
 				{
-					*m_outFile << m_solution->getPiecePtr(row, column);
+					*m_outFile << m_solution->getPiecePtr(row, column)->getId();
 					if (column < (m_solution->getWidth() - 1))
 					{
 						*m_outFile << " ";

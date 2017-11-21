@@ -3,7 +3,17 @@
 
 bool BoardErrors::hasErrors() const
 {
-	return m_error || (!m_cornerTLexist) || (!m_cornerTRexist) || (!m_cornerBLexist) || (!m_cornerBRexist);
+	return m_error;
+}
+
+bool BoardErrors::checkCorners()
+{
+	if (!m_cornerTLexist || !m_cornerTRexist || !m_cornerBLexist || !m_cornerBRexist) {
+		m_error = true;
+		return false;
+	}
+	else
+		return true;
 }
 
 void BoardErrors::sortErrors() {
