@@ -18,7 +18,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 	}
 	else
 	{
-		topFit = internalGetPiecePtr(i - 1, j)->getBottom();
+		topFit = -internalGetPiecePtr(i - 1, j)->getBottom();
 	}
 
 	if (j == 0) // First column
@@ -27,7 +27,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 	}
 	else
 	{
-		leftFit = internalGetPiecePtr(i, j - 1)->getBottom();
+		leftFit = -internalGetPiecePtr(i, j - 1)->getRight();
 	}
 
 	list<Piece*>& optionsList = remainingPieces.getEQClass(leftFit, topFit);
