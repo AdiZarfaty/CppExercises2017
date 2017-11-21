@@ -23,11 +23,11 @@ void Board::readBoard() {
 		int sides[4];
 		int id;
 		vector<int> ids(m_numberOfPieces);
-		for (int i = 0; i < m_numberOfPieces; i++) {
-
+		for (int i = 0; i < numElements; i++) {
 			getline(*m_inFile, line);
 			ss = stringstream(line);
-
+			if (line == "")
+				break;
 			ss >> id;
 			if (!ss.fail()) {
 				if (id < 1 || id > m_numberOfPieces) {
@@ -37,7 +37,7 @@ void Board::readBoard() {
 				else {
 					ids[id - 1]++;
 					if (ids[id - 1] > 1) {
-						m_error.addDuplicateID(i + 1);
+						//m_error.addDuplicateID(i + 1);
 						continue;
 					}
 				}
@@ -68,7 +68,8 @@ void Board::readBoard() {
 					else {
 						m_error.sumOfEdges() += sides[j];
 					}
-
+					if(j==3)
+						setCorner(sides[0], sides[1], sides[2], sides[3]);
 				}
 				else {
 					m_error.addWrongLine(id, line);
@@ -80,9 +81,7 @@ void Board::readBoard() {
 				m_error.addWrongLine(id, line);
 			}
 			if (!m_error.hasErrors()) {
-
 				Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
-				setCorner(newPiecePtr);
 				m_allPieces.push_back(newPiecePtr);
 			}
 		}
@@ -111,16 +110,17 @@ void Board::readBoard() {
 	else {
 		m_error.setCouldNotExtractNumElements();
 	}
+
 }
 
-void Board::setCorner(Piece* piece) {
-	if (piece->getBottom() == 0 && piece->getRight() == 0)
+void Board::setCorner(int left, int top, int right, int bottom) {
+	if (bottom == 0 && right == 0)
 		m_error.setCornerBRexist();
-	if (piece->getTop() == 0 && piece->getRight() == 0)
+	if (top == 0 && right == 0)
 		m_error.setCornerTRexist();
-	if (piece->getBottom() == 0 && piece->getLeft() == 0)
+	if (bottom == 0 && left == 0)
 		m_error.setCornerBLexist();
-	if (piece->getTop() == 0 && piece->getLeft() == 0)
+	if (top == 0 && left == 0)
 		m_error.setCornerTLexist();
 }
 

@@ -45,7 +45,7 @@ public:
 	}
 
 	void readBoard();
-	void setCorner(Piece *piece);
+	void setCorner(int left, int top, int right, int bottom);
 	// Try to solve. if solution exist, put it in m_solution.
 	bool solve();
 
