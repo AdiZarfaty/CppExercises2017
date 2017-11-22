@@ -24,17 +24,22 @@ void Board::readBoard() {
 		int id;
 		vector<int> ids(m_numberOfPieces);
 		for (int i = 0; i < numElements; i++) {
+			if (m_inFile->eof()) {
+				break;
+			}
 			getline(*m_inFile, line);
 			ss = stringstream(line);
-			if (line == "")
-				break;
+			if (line == "") {
+				i--;
+				continue;
+			}
 			ss >> id;
 			if (!ss.fail()) {
 				if (id < 1 || id > m_numberOfPieces) {
 					m_error.addWrongID(id);
 					continue;
 				}
-				else {
+				else {//already seen this id
 					ids[id - 1]++;
 					if (ids[id - 1] > 1) {
 						m_error.addWrongLine(id, line);
@@ -46,7 +51,7 @@ void Board::readBoard() {
 					if (!ss.fail()) {
 						if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
 							m_error.addWrongLine(id, line);
-							continue;
+							break;
 						}
 						else if (sides[j] == 0) {
 							switch (j) {
@@ -67,19 +72,18 @@ void Board::readBoard() {
 					}
 					else {
 						m_error.addWrongLine(id, line);
-						continue;
+						break;
 					}
 				}
 				if (!ss.eof()) {
 					m_error.addWrongLine(id, line);
-					continue;
 				}
 				if (!m_error.hasErrors()) {
 					Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
 					m_allPieces.push_back(newPiecePtr);
 				}
 			}
-			else {
+			else {//if id is string a similar massage to wrong id but not the same.
 				ss = stringstream(line);
 				string id_str; ss >> id_str;
 				if (!ss.fail()) {
@@ -88,7 +92,6 @@ void Board::readBoard() {
 				else {
 					m_error.addWrongLine(-1, line);
 				}
-				continue;
 			}
 		}
 		m_inFile->close();
