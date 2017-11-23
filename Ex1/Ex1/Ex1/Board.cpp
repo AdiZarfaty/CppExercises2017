@@ -82,8 +82,11 @@ void Board::readBoard() {
 					}
 				}
 				if (!ss.eof() && error == false) {
-					m_error.addWrongLine(id, line);
-					ids[id - 1]--;
+					string tmp; ss >> tmp;
+					if (!ss.fail()) {
+						m_error.addWrongLine(id, line);
+						ids[id - 1]--;
+					}
 				}
 				if (!m_error.hasErrors()) {
 					Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
