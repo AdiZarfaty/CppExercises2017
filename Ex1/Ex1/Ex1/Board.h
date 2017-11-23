@@ -17,8 +17,8 @@ using std::cerr;
 using std::to_string;
 
 class Board {
-	ifstream* m_inFile;
-	ofstream* m_outFile;
+	ifstream* m_inFilePtr; // not owned by board
+	ofstream* m_outFilePtr; // not owned by board
 	int m_numberOfPieces;
 	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
 	PieceEQClasses m_eqClasses;
@@ -32,7 +32,7 @@ class Board {
 	// fill the EQClasses with the pieces
 	void setEqualityClasses();
 public:
-	Board(ifstream* inFile, ofstream* outFile): m_inFile(inFile), m_outFile(outFile){
+	Board(ifstream* inFilePtr, ofstream* outFilePtr): m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr){
 		m_solution = nullptr;
 	}
 
@@ -42,7 +42,10 @@ public:
 			delete piece;
 		}
 
-		delete m_solution;
+		if (m_solution != nullptr)
+		{
+			delete m_solution;
+		}
 	}
 
 	void readBoard();
