@@ -4,7 +4,7 @@
 
 bool Solution::solve()
 {
-	return solve(0, 0, m_remainingPieces);
+	return solve(0, 0, *m_Pieces);
 }
 
 bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
@@ -60,7 +60,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 			}
 		}
 
-		internalGetPiecePtr(i, j) = tilePtr; // place the tile in the location
+		internalAccessPiecePtr(i, j) = tilePtr; // place the tile in the location
 		
 		iter = optionsList.erase(iter); //remove from the options list, as it is no longer available
 		
@@ -73,7 +73,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 			int nextj = (j + 1) % m_width; // at m_width go back to 0
 			int nexti = i + ((j + 1) / m_width);
 
-			success = solve(nexti, nextj, remainingPieces);
+			success = solve(nexti, nextj, remainingPieces); //send by copy the current state of remaining pieces
 			
 		}
 		if (success)
@@ -84,7 +84,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 		else
 		{
 			// mark as unsolved (avoid garbage)
-			internalGetPiecePtr(i, j) = nullptr;
+			internalAccessPiecePtr(i, j) = nullptr;
 			// return this tile, and try the next option
 			optionsList.insert(iter, tilePtr);
 			//iter++; //TODO: does iter need to be ++ or does the erase+insert moved it? needs testing

@@ -6,13 +6,13 @@ void Board::readBoard() {
 	//read first line of file and extract numElements
 	string line;
 	stringstream ss;
-	getline(*m_inFile, line, '=');
+	getline(*m_inFilePtr, line, '=');
 	ss = stringstream(line);
 	ss >> line;
 	if (line != "NumElements") {
 		m_error.setFirstLineIsInWrongFormat();
 	}
-	getline(*m_inFile, line);
+	getline(*m_inFilePtr, line);
 	ss = stringstream(line);
 	int numElements; ss >> numElements;
 	if (!ss.fail()) { //got the number
@@ -24,10 +24,10 @@ void Board::readBoard() {
 		int id;
 		vector<int> ids(m_numberOfPieces);
 		for (int i = 0; i < numElements; i++) {
-			if (m_inFile->eof()) {
+			if (m_inFilePtr->eof()) {
 				break;
 			}
-			getline(*m_inFile, line);
+			getline(*m_inFilePtr, line);
 			ss = stringstream(line);
 			if (line == "") {
 				i--;
@@ -94,7 +94,7 @@ void Board::readBoard() {
 				}
 			}
 		}
-		m_inFile->close();
+		m_inFilePtr->close();
 		//check for errors
 		m_error.checkCorners();
 		if (m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 
@@ -166,7 +166,7 @@ bool Board::solve()
 		{
 			numOfStraightEdgesWasOkAtLeastOnce = true;
 
-			m_solution = new Solution(rows, columns, m_eqClasses);
+			m_solution = new Solution(rows, columns, &m_eqClasses);
 
 			success = m_solution->solve();
 
@@ -192,15 +192,16 @@ bool Board::solve()
 
 void Board::writeResponseToFile()
 {
+	ofstream& outstream = *m_outFilePtr;
 	if (m_error.hasErrors())
 	{
-		m_error.printErrors(*m_outFile);
+		m_error.printErrors(outstream);
 	}
 	else
 	{
 		if (m_solution == nullptr)
 		{
-			*m_outFile << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
+			outstream << "Cannot solve puzzle: it seems that there is no proper solution" << endl;
 		}
 		else
 		{
@@ -208,15 +209,18 @@ void Board::writeResponseToFile()
 			{
 				for (int column = 0; column < (m_solution->getWidth()); column++)
 				{
-					*m_outFile << m_solution->getPiecePtr(row, column)->getId();
+					outstream << m_solution->getPiecePtr(row, column)->getId();
+					outstream.flush();
+
 					if (column < (m_solution->getWidth() - 1))
 					{
-						*m_outFile << " ";
+						outstream << " ";
 					}
 				}
 
-				*m_outFile << endl;
+				outstream << endl;
 			}
 		}
 	}
+	
 }
