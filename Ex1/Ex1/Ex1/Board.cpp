@@ -5,6 +5,7 @@ void Board::readBoard() {
 
 	//read first line of file and extract numElements
 	string line;
+	bool error;
 	stringstream ss;
 	getline(*m_inFile, line, '=');
 	ss = stringstream(line);
@@ -24,6 +25,7 @@ void Board::readBoard() {
 		int id;
 		vector<int> ids(m_numberOfPieces);
 		for (int i = 0; i < numElements; i++) {
+			error = false; //error in this specific piece
 			if (m_inFile->eof()) {
 				break;
 			}
@@ -51,6 +53,8 @@ void Board::readBoard() {
 					if (!ss.fail()) {
 						if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
 							m_error.addWrongLine(id, line);
+							ids[id - 1]--;
+							error = true;
 							break;
 						}
 						else if (sides[j] == 0) {
@@ -72,11 +76,14 @@ void Board::readBoard() {
 					}
 					else {
 						m_error.addWrongLine(id, line);
+						ids[id - 1]--;
+						error = true;
 						break;
 					}
 				}
-				if (!ss.eof()) {
+				if (!ss.eof() && error == false) {
 					m_error.addWrongLine(id, line);
+					ids[id - 1]--;
 				}
 				if (!m_error.hasErrors()) {
 					Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
