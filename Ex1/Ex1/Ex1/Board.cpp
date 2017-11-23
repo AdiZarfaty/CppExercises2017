@@ -1,4 +1,4 @@
-	#include "stdafx.h"
+
 #include "Board.h"
 
 void Board::readBoard() {

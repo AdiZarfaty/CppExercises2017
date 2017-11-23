@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "BoardErrors.h"
 
 bool BoardErrors::hasErrors() const
