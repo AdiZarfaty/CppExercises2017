@@ -1,6 +1,6 @@
 #pragma once
 class Piece {
-	int m_id;
+	const int m_id;
 	const short m_left; // -1 for a female edge, 0 for flat edge, 1 for male edge
 	const short m_top;
 	const short m_right;
