@@ -13,8 +13,8 @@ class Solution
 	const int m_heigt;
 	const int m_width;
 
-	vector<vector<Piece*>> m_puzzleSolution;
 	PieceEQClasses* m_Pieces;
+	vector<vector<Piece*>> m_puzzleSolution;
 
 	const Piece* internalGetPiecePtr(int row, int column) const
 	{

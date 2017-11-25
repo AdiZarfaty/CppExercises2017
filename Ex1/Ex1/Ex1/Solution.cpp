@@ -33,7 +33,6 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 	list<Piece*>& optionsList = remainingPieces.getEQClass(leftFit, topFit);
 
 	bool success = false;
-	Piece* nextTilePtr = nullptr;
 
 	list<Piece*>::iterator iter = optionsList.begin();
 

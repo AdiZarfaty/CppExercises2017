@@ -18,7 +18,10 @@ using std::invalid_argument;
 int main(int argc, char *argv[])
 {
 	// debug - catch heap corruptions: _CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
-
+	if (argc != 3) {
+		cerr << "ERROR: expecting 2 command line arguments" << endl;
+			return 0;
+	}
 	ifstream inFile;
 	inFile.open(argv[1]);
 	if (!inFile) {
