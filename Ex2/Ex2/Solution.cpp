@@ -93,7 +93,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 		internalAccessPiecePtr(i, j) = tilePtr; // place the tile in the location
 
 
-		// debug
+		// for debug
 		//if ((m_heigt*m_width) - (i*m_width + j) > 25)
 		//{
 		//	system("CLS");

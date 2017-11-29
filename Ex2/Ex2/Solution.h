@@ -4,7 +4,7 @@
 #include <vector>
 #include <string> //for debug
 #include <sstream> // for debug
-#include <iostream>
+#include <iostream> // for debug
 
 using std::string; // for debug
 using std::vector;
@@ -33,6 +33,8 @@ class Solution
 	// Solve the puzzle for i,j and onward. get a copy of the remaining pieces (by val)
 	bool solve(int i, int j, PieceEQClasses remainingPieces); 
 
+	//TODO: remove debug info at the end
+	// Debug info
 	vector<vector<int>> m_optionsCounter;
 	vector<vector<int>> m_triedSolutionCounter;
 
