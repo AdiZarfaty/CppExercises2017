@@ -12,7 +12,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-class Solution
+class Solution //TODO: ADI - create new classes to not ruin this algorithm
 {
 	const int m_heigt;
 	const int m_width;

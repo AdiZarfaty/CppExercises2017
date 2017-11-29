@@ -4,7 +4,7 @@
 
 using std::list;
 
-class PieceEQClasses
+class PieceEQClasses //TODO: ADI instead of list<Piece*> we will use RotationContainer class
 {
 	list<Piece*> m_EQClasses[3][3];
 public:

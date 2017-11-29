@@ -1,5 +1,5 @@
 #pragma once
-class Piece {
+class Piece { //TODO: ADI: add a bool for marking it as used, add the rotation to it
 	const int m_id;
 	const short m_left; // -1 for a female edge, 0 for flat edge, 1 for male edge
 	const short m_top;

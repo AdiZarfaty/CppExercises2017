@@ -7,7 +7,7 @@ bool Solution::solve()
 	return solve(0, 0, *m_Pieces);
 }
 
-bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
+bool Solution::solve(int i, int j, PieceEQClasses remainingPieces) //TODO: no longer need to pass remaining pieces because we mark them as used
 {
 	short leftFit;
 	short topFit;
@@ -34,7 +34,7 @@ bool Solution::solve(int i, int j, PieceEQClasses remainingPieces)
 
 	bool success = false;
 
-	list<Piece*>::iterator iter = optionsList.begin();
+	list<Piece*>::iterator iter = optionsList.begin(); //TODO: ADI: if iter->usedBefore - continue, dont use it twice
 
 	int pieceTryiesCounter = 0; // for debug
 

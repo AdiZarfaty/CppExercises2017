@@ -133,7 +133,7 @@ void Board::readBoard() {
 
 }
 
-void Board::setCorner(int left, int top, int right, int bottom) {
+void Board::setCorner(int left, int top, int right, int bottom) { //TODO: ROY - check if 4 pieces are in EQ[0][0] instead / or 1 row
 	if (bottom == 0 && right == 0)
 		m_error.setCornerBRexist();
 	if (top == 0 && right == 0)
@@ -146,7 +146,7 @@ void Board::setCorner(int left, int top, int right, int bottom) {
 
 void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
-		m_eqClasses.getEQClass(piecePtr->getLeft(), piecePtr->getTop()).push_back(piecePtr);
+		m_eqClasses.getEQClass(piecePtr->getLeft(), piecePtr->getTop()).push_back(piecePtr); //TODO: ROY: run on all 4 rotation and put it in all the relevant EQ Classes
 	}
 }
 
