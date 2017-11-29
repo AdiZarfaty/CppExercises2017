@@ -4,9 +4,13 @@
 #include <vector>
 #include <string> //for debug
 #include <sstream> // for debug
+#include <iostream>
 
 using std::string; // for debug
 using std::vector;
+
+using std::cout;
+using std::endl;
 
 class Solution
 {
@@ -29,7 +33,11 @@ class Solution
 	// Solve the puzzle for i,j and onward. get a copy of the remaining pieces (by val)
 	bool solve(int i, int j, PieceEQClasses remainingPieces); 
 
-	string debugGetSolutionAsString(); // used for debug
+	vector<vector<int>> m_optionsCounter;
+	vector<vector<int>> m_triedSolutionCounter;
+
+
+	string debugGetSolutionAsString(int i, int j, int pieceTryiesCounter, int optionListLength); // used for debug
 public:
 	Solution(int height, int width, PieceEQClasses* pieces): m_heigt(height), m_width(width), m_Pieces(pieces), m_puzzleSolution(height){
 
