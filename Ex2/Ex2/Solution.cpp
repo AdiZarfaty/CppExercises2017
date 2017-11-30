@@ -7,7 +7,7 @@ bool Solution::solve()
 	return solve(0, 0, *m_Pieces);
 }
 
-bool Solution::solve(int i, int j, PieceEQClasses remainingPieces) //TODO: no longer need to pass remaining pieces because we mark them as used
+bool Solution::solve(int i, int j, EQClasses<Piece*> remainingPieces) //TODO: no longer need to pass remaining pieces because we mark them as used
 {
 	short leftFit;
 	short topFit;

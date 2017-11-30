@@ -21,7 +21,7 @@ class Board {
 	ofstream* m_outFilePtr; // not owned by board
 	int m_numberOfPieces;
 	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
-	PieceEQClasses m_eqClasses;
+	EQClasses<Piece*> m_eqClasses;
 	BoardErrors m_error;
 	Solution* m_solution;
 	int m_numOfStraightEdges_right = 0;

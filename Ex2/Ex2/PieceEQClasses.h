@@ -4,17 +4,15 @@
 
 using std::list;
 
-class PieceEQClasses //TODO: ADI instead of list<Piece*> we will use RotationContainer class
+template <class T>
+class EQClasses //TODO: ADI instead of list<Piece*> we will use RotationContainer class - I am using templates instead
 {
-	list<Piece*> m_EQClasses[3][3];
+	list<T> m_EQClasses[3][3];
 public:
-	PieceEQClasses();
 
-	list<Piece*>& getEQClass(short left, short top)
+	list<T>& getEQClass(short left, short top)
 	{
 		return m_EQClasses[left + 1][top + 1];
 	}
-
-	~PieceEQClasses();
 };
 

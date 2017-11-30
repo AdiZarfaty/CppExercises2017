@@ -17,7 +17,7 @@ class Solution //TODO: ADI - create new classes to not ruin this algorithm
 	const int m_heigt;
 	const int m_width;
 
-	PieceEQClasses* m_Pieces;
+	EQClasses<Piece*>* m_Pieces;
 	vector<vector<Piece*>> m_puzzleSolution;
 
 	const Piece* internalGetPiecePtr(int row, int column) const
@@ -31,7 +31,7 @@ class Solution //TODO: ADI - create new classes to not ruin this algorithm
 	}
 
 	// Solve the puzzle for i,j and onward. get a copy of the remaining pieces (by val)
-	bool solve(int i, int j, PieceEQClasses remainingPieces); 
+	bool solve(int i, int j, EQClasses<Piece*> remainingPieces);
 
 	//TODO: remove debug info at the end
 	// Debug info
@@ -41,7 +41,7 @@ class Solution //TODO: ADI - create new classes to not ruin this algorithm
 
 	string debugGetSolutionAsString(int i, int j, int pieceTryiesCounter, int optionListLength); // used for debug
 public:
-	Solution(int height, int width, PieceEQClasses* pieces): m_heigt(height), m_width(width), m_Pieces(pieces), m_puzzleSolution(height){
+	Solution(int height, int width, EQClasses<Piece*>* pieces): m_heigt(height), m_width(width), m_Pieces(pieces), m_puzzleSolution(height){
 
 		// setup an empty board
 		for (int i = 0; i < m_heigt; i++)
