@@ -5,9 +5,11 @@ class Piece { //TODO: ADI: add a bool for marking it as used, add the rotation t
 	const short m_top;
 	const short m_right;
 	const short m_bottom;
+	bool m_used;
 public:
 	Piece(int id, short left, short top, short right, short bottom):
 		m_id(id), m_left(left), m_top(top), m_right(right), m_bottom(bottom){
+		m_used = false;
 	}
 
 	int getId() const {
