@@ -8,7 +8,7 @@ bool BoardErrors::hasErrors() const
 
 bool BoardErrors::checkCorners()
 {
-	if (!m_cornerTLexist || !m_cornerTRexist || !m_cornerBLexist || !m_cornerBRexist) {
+	if (!m_fourCorners) {
 		m_error = true;
 		return false;
 	}
@@ -65,14 +65,6 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		if (m_wrongNumberOfStraightEdges && m_wrongID.empty() && m_nonIntID.empty()
 			&& m_wrongLineID.empty())
 			outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;
-		if (!m_cornerTLexist)
-			outFile << "Cannot solve puzzle: missing corner element TL" << endl;
-		if (!m_cornerTRexist)
-			outFile << "Cannot solve puzzle: missing corner element TR" << endl;
-		if (!m_cornerBLexist)
-			outFile << "Cannot solve puzzle: missing corner element BL" << endl;
-		if (!m_cornerBRexist)
-			outFile << "Cannot solve puzzle: missing corner element BR" << endl;
 		if (m_wrongSumOfEdges && m_wrongID.empty() && m_nonIntID.empty()
 			&& m_wrongLineID.empty())
 			outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;

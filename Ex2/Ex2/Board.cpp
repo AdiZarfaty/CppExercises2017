@@ -58,21 +58,11 @@ void Board::readBoard() {
 							break;
 						}
 						else if (sides[j] == 0) {
-							switch (j) {
-							case 0: m_numOfStraightEdges_left++;
-								break;
-							case 1: m_numOfStraightEdges_top++;
-								break;
-							case 2: m_numOfStraightEdges_right++;
-								break;
-							case 3: m_numOfStraightEdges_bottom++;
-							}
+							m_numOfStraightEdges++;
 						}
 						else {
 							m_error.sumOfEdges() += sides[j];
 						}
-						if (j == 3 && ss.eof())
-							setCorner(sides[0], sides[1], sides[2], sides[3]);
 					}
 					else {
 						m_error.addWrongLine(id, line);
@@ -86,6 +76,7 @@ void Board::readBoard() {
 					if (!ss.fail()) {
 						m_error.addWrongLine(id, line);
 						ids[id - 1]--;
+						break;
 					}
 				}
 				if (!m_error.hasErrors()) {
@@ -93,7 +84,7 @@ void Board::readBoard() {
 					m_allPieces.push_back(newPiecePtr);
 				}
 			}
-			else {//if id is string a similar massage to wrong id but not the same.
+			else {//if id is a string add a similar error to that of wrong id, but not the same one.
 				ss = stringstream(line);
 				string id_str; ss >> id_str;
 				if (!ss.fail()) {
@@ -104,20 +95,21 @@ void Board::readBoard() {
 				}
 			}
 		}
+		setCorner();
 		m_inFilePtr->close();
 		//check for errors
 		m_error.checkCorners();
-		if (m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 
-			|| m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0)
+		if (m_numOfStraightEdges % 2 != 0) {
 			m_error.setWrongNumberOfStraightEdges();
-		if (m_error.sumOfEdges() != 0)
+		}
+		if (m_error.sumOfEdges() != 0) {
 			m_error.setWrongSumOfEdges();
+		}
 		for (int i = 0; i < m_numberOfPieces; i++) {
 			if (ids[i] == 0) {
 				m_error.addMissingID(i + 1);
 			}
 		}
-
 		if (!m_error.hasErrors())
 		{
 			setEqualityClasses();
@@ -133,20 +125,31 @@ void Board::readBoard() {
 
 }
 
-void Board::setCorner(int left, int top, int right, int bottom) { //TODO: ROY - check if 4 pieces are in EQ[0][0] instead / or 1 row
-	if (bottom == 0 && right == 0)
-		m_error.setCornerBRexist();
-	if (top == 0 && right == 0)
-		m_error.setCornerTRexist();
-	if (bottom == 0 && left == 0)
-		m_error.setCornerBLexist();
-	if (top == 0 && left == 0)
-		m_error.setCornerTLexist();
+void Board::setCorner() { //TODO: need to check if there exists 2 piece with 3 straight edges
+	if (m_eqClasses.getEQClass(0,0).size() >= 4) {
+		m_error.setFourCorners();
+	}
 }
 
 void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
-		m_eqClasses.getEQClass(piecePtr->getLeft(), piecePtr->getTop()).push_back(piecePtr); //TODO: ROY: run on all 4 rotation and put it in all the relevant EQ Classes
+		int rotation = 0;
+		for (int i = 0; i <= 270; i += 90) {
+			RotationContainer *rc = new RotationContainer(piecePtr, rotation+i);
+			switch (i) {
+			case 0:
+				m_eqClasses.getEQClass(rc->getPiece()->getLeft(), rc->getPiece()->getTop()).push_back(rc);
+				break;
+			case 90:
+				m_eqClasses.getEQClass(rc->getPiece()->getBottom(), rc->getPiece()->getLeft()).push_back(rc);
+				break;
+			case 180:
+				m_eqClasses.getEQClass(rc->getPiece()->getRight(), rc->getPiece()->getBottom()).push_back(rc);
+				break;
+			case 270:
+				m_eqClasses.getEQClass(rc->getPiece()->getTop(), rc->getPiece()->getRight()).push_back(rc);
+			}
+		}
 	}
 }
 
@@ -169,7 +172,7 @@ bool Board::solve()
 		}
 
 		columns = m_numberOfPieces / rows;		
-
+		/*TODO: ADI no longer relevant
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
 		if ((m_numOfStraightEdges_right >= (rows))
 			&& (m_numOfStraightEdges_top >= (columns)))
@@ -190,6 +193,7 @@ bool Board::solve()
 				m_solution = nullptr;
 			}
 		}
+		*/
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)

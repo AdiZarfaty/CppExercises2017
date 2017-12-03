@@ -21,10 +21,7 @@ class BoardErrors
 	bool m_firstLineIsInWrongFormat = false;
 	bool m_wrongSumOfEdges = false;
 	bool m_couldNotExtractNumElements = false;
-	bool m_cornerTLexist = false;
-	bool m_cornerTRexist = false;
-	bool m_cornerBLexist = false;
-	bool m_cornerBRexist = false;
+	bool m_fourCorners;
 	bool m_wrongNumberOfStraightEdges = false;
 	vector<int> m_missingID;
 	vector<int> m_wrongID; // ids that are not matching the m_numberOfPieces
@@ -64,24 +61,9 @@ public:
 		m_error = true;
 	}
 
-	void setCornerTLexist()
+	void setFourCorners()
 	{
-		m_cornerTLexist = true;
-	}
-
-	void setCornerTRexist()
-	{
-		m_cornerTRexist = true;
-	}
-
-	void setCornerBLexist()
-	{
-		m_cornerBLexist = true;
-	}
-
-	void setCornerBRexist()
-	{
-		m_cornerBRexist = true;
+		m_fourCorners = true;
 	}
 
 	void setWrongNumberOfStraightEdges()
