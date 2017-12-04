@@ -133,9 +133,8 @@ void Board::setCorner() { //TODO: need to check if there exists 2 piece with 3 s
 
 void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
-		int rotation = 0;
-		for (int i = 0; i <= 270; i += 90) {
-			RotationContainer *rc = new RotationContainer(piecePtr, rotation+i);
+		for (int i : {0, 90, 180, 270}) {
+			RotationContainer *rc = new RotationContainer(piecePtr, i);
 			switch (i) {
 			case 0:
 				m_eqClasses.getEQClass(rc->getPiece()->getLeft(), rc->getPiece()->getTop()).push_back(rc);
