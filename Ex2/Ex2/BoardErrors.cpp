@@ -6,14 +6,11 @@ bool BoardErrors::hasErrors() const
 	return m_error;
 }
 
-bool BoardErrors::checkCorners()
+void BoardErrors::checkCorners()
 {
-	if (!m_fourCorners) {
+	if (!m_fourCorners && !m_twoCorners) {
 		m_error = true;
-		return false;
 	}
-	else
-		return true;
 }
 
 void BoardErrors::sortErrors() {

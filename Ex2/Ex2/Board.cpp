@@ -95,10 +95,7 @@ void Board::readBoard() {
 				}
 			}
 		}
-		//setCorner();  //TODO: cant do this here anymore - now corners are set after eqclass
 		m_inFilePtr->close();
-		//check for errors
-		//m_error.checkCorners(); //TODO: cant do this here anymore - now corners are set after eqclass
 		if (m_numOfStraightEdges % 2 != 0) {
 			m_error.setWrongNumberOfStraightEdges();
 		}
@@ -126,15 +123,26 @@ void Board::readBoard() {
 
 }
 
-void Board::setCorner() { //TODO: need to check if there exists 2 piece with 3 straight edges
+void Board::setCorner() {
+	int count = 0;
 	if (m_eqClasses.getEQClass(0,0).size() >= 4) {
 		m_error.setFourCorners();
 	}
+	for (PieceRotationContainer rc : m_eqClasses.getEQClass(0, 0)) {
+		if (rc.getRight() == 0 || rc.getBottom() == 0) {
+			count++;
+			if (count = 2) {
+				m_error.setTwoCorners();
+				break;
+			}
+		}
+	}
+	m_error.checkCorners();
 }
 
 void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
-		for (int i : {0, 90, 180, 270}) {
+		for (int i = 0; i < 4; i++) {
 			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
 			m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
 		}

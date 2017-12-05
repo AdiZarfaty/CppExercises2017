@@ -22,6 +22,7 @@ class BoardErrors
 	bool m_wrongSumOfEdges = false;
 	bool m_couldNotExtractNumElements = false;
 	bool m_fourCorners;
+	bool m_twoCorners;
 	bool m_wrongNumberOfStraightEdges = false;
 	vector<int> m_missingID;
 	vector<int> m_wrongID; // ids that are not matching the m_numberOfPieces
@@ -31,7 +32,7 @@ class BoardErrors
 
 public:
 	bool hasErrors() const;
-	bool checkCorners();
+	void checkCorners();
 	void printErrors(ofstream& outFile) const;
 	void sortErrors();
 	void setNumberOfPieces(int num)
@@ -63,7 +64,12 @@ public:
 
 	void setFourCorners()
 	{
-		m_fourCorners = true; //TODO: what about m_error? checkCorners() is not used. need fix.
+		m_fourCorners = true;
+	}
+
+	bool getFourCorners()
+	{
+		return m_fourCorners;
 	}
 
 	void setWrongNumberOfStraightEdges()
@@ -92,6 +98,14 @@ public:
 		m_wrongLineID.push_back(id);
 		m_wrongLineString.push_back(line);
 		m_error = true;
+	}
+	void setTwoCorners()
+	{
+		m_twoCorners = true;
+	}
+	bool getTwoCorners()
+	{
+		return m_twoCorners;
 	}
 };
 
