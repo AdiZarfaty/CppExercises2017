@@ -95,10 +95,10 @@ void Board::readBoard() {
 				}
 			}
 		}
-		setCorner();
+		//setCorner();  //TODO: cant do this here anymore - now corners are set after eqclass
 		m_inFilePtr->close();
 		//check for errors
-		m_error.checkCorners();
+		//m_error.checkCorners(); //TODO: cant do this here anymore - now corners are set after eqclass
 		if (m_numOfStraightEdges % 2 != 0) {
 			m_error.setWrongNumberOfStraightEdges();
 		}
@@ -113,6 +113,7 @@ void Board::readBoard() {
 		if (!m_error.hasErrors())
 		{
 			setEqualityClasses();
+			setCorner();
 		}
 		else
 		{
@@ -134,20 +135,8 @@ void Board::setCorner() { //TODO: need to check if there exists 2 piece with 3 s
 void Board::setEqualityClasses() {
 	for (Piece *piecePtr : m_allPieces) {
 		for (int i : {0, 90, 180, 270}) {
-			RotationContainer *rc = new RotationContainer(piecePtr, i);
-			switch (i) {
-			case 0:
-				m_eqClasses.getEQClass(rc->getPiece()->getLeft(), rc->getPiece()->getTop()).push_back(rc);
-				break;
-			case 90:
-				m_eqClasses.getEQClass(rc->getPiece()->getBottom(), rc->getPiece()->getLeft()).push_back(rc);
-				break;
-			case 180:
-				m_eqClasses.getEQClass(rc->getPiece()->getRight(), rc->getPiece()->getBottom()).push_back(rc);
-				break;
-			case 270:
-				m_eqClasses.getEQClass(rc->getPiece()->getTop(), rc->getPiece()->getRight()).push_back(rc);
-			}
+			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
+			m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
 		}
 	}
 }
@@ -171,14 +160,19 @@ bool Board::solve()
 		}
 
 		columns = m_numberOfPieces / rows;		
-		/*TODO: ADI no longer relevant
+		//TODO: ADI no longer relevant
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
-		if ((m_numOfStraightEdges_right >= (rows))
-			&& (m_numOfStraightEdges_top >= (columns)))
-		{
+
+
+		//if ((m_numOfStraightEdges_right >= (rows))
+		//	&& (m_numOfStraightEdges_top >= (columns)))
+		//{
+
+		//TODO: Still need to fix number of straight edges test
+
 			numOfStraightEdgesWasOkAtLeastOnce = true;
 
-			m_solution = new Solution(rows, columns, &m_eqClasses);
+			m_solution = new RotatableSolution(rows, columns, &m_eqClasses);
 
 			success = m_solution->solve();
 
@@ -191,8 +185,8 @@ bool Board::solve()
 				delete m_solution;
 				m_solution = nullptr;
 			}
-		}
-		*/
+		//}
+		
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
@@ -222,8 +216,13 @@ void Board::writeResponseToFile()
 			{
 				for (int column = 0; column < (m_solution->getWidth()); column++)
 				{
-					outstream << m_solution->getPiecePtr(row, column)->getId();
-					outstream.flush();
+					const PieceRotationContainer& rc = m_solution->getPieceRotationContainer(row, column);
+					outstream << rc.getId();
+
+					if (rc.getRotationAngle() > 0)
+					{
+						outstream << " [" << rc.getRotationAngle() << "]";
+					}
 
 					if (column < (m_solution->getWidth() - 1))
 					{
@@ -235,5 +234,6 @@ void Board::writeResponseToFile()
 			}
 		}
 	}
-	
+
+	outstream.flush();	
 }

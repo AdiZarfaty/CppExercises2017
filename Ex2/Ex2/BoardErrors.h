@@ -63,7 +63,7 @@ public:
 
 	void setFourCorners()
 	{
-		m_fourCorners = true;
+		m_fourCorners = true; //TODO: what about m_error? checkCorners() is not used. need fix.
 	}
 
 	void setWrongNumberOfStraightEdges()

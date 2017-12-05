@@ -150,7 +150,8 @@
     <ClInclude Include="Main.h" />
     <ClInclude Include="Piece.h" />
     <ClInclude Include="PieceEQClasses.h" />
-    <ClInclude Include="RotationContainer.h" />
+    <ClInclude Include="PieceRotationContainer.h" />
+    <ClInclude Include="RotatableSolution.h" />
     <ClInclude Include="Solution.h" />
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +160,8 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Piece.cpp" />
     <ClCompile Include="PieceEQClasses.cpp" />
-    <ClCompile Include="RotationContainer.cpp" />
+    <ClCompile Include="PieceRotationContainer.cpp" />
+    <ClCompile Include="RotatableSolution.cpp" />
     <ClCompile Include="Solution.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
