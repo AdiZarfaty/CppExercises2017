@@ -6,7 +6,8 @@
 #include "BoardErrors.h"
 #include "PieceEQClasses.h"
 #include "Solution.h"
-#include "RotationContainer.h"
+#include "RotatableSolution.h"
+#include "PieceRotationContainer.h"
 
 using std::vector;
 using std::string;
@@ -22,9 +23,9 @@ class Board {
 	ofstream* m_outFilePtr; // not owned by board
 	int m_numberOfPieces;
 	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
-	EQClasses<RotationContainer*> m_eqClasses;
+	EQClasses<PieceRotationContainer> m_eqClasses;
 	BoardErrors m_error;
-	Solution* m_solution;
+	RotatableSolution* m_solution;
 	int m_numOfStraightEdges = 0;
 
 	// fill the EQClasses with the pieces
