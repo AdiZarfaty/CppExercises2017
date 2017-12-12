@@ -8,6 +8,7 @@ bool BoardErrors::hasErrors() const
 
 void BoardErrors::checkCorners()
 {
+	//TODO: need to check with/without rotation
 	if (!m_fourCorners && !m_twoCorners) {
 		m_error = true;
 	}
@@ -59,6 +60,7 @@ void BoardErrors::printErrors(ofstream& outFile) const
 				outFile << endl;
 			}
 		}
+		//TODO: need to report missing corners
 		if (m_wrongNumberOfStraightEdges && m_wrongID.empty() && m_nonIntID.empty()
 			&& m_wrongLineID.empty())
 			outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;

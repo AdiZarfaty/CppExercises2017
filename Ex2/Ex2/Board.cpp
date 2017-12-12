@@ -180,7 +180,7 @@ bool Board::solve()
 
 			numOfStraightEdgesWasOkAtLeastOnce = true;
 
-			m_solution = new RotatableSolution(rows, columns, &m_eqClasses);
+			m_solution = new RotatableSolution(rows, columns, &m_eqClasses, m_rotationEnabled);
 
 			success = m_solution->solve();
 
@@ -205,7 +205,7 @@ bool Board::solve()
 	return success;
 }
 
-void Board::writeResponseToFile()
+void Board::writeResponseToFile() const
 {
 	ofstream& outstream = *m_outFilePtr;
 	if (m_error.hasErrors())

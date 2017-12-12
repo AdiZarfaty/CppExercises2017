@@ -19,10 +19,11 @@ using std::cerr;
 using std::to_string;
 
 class Board {
+	bool m_rotationEnabled; //should we try rotation or not
 	ifstream* m_inFilePtr; // not owned by board
 	ofstream* m_outFilePtr; // not owned by board
 	int m_numberOfPieces;
-	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces
+	vector<Piece*> m_allPieces;  // Board is the owner of all the pieces //TODO: convert to smart pointers
 	EQClasses<PieceRotationContainer> m_eqClasses;
 	BoardErrors m_error;
 	RotatableSolution* m_solution;
@@ -31,7 +32,7 @@ class Board {
 	// fill the EQClasses with the pieces
 	void setEqualityClasses();
 public:
-	Board(ifstream* inFilePtr, ofstream* outFilePtr): m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr){
+	Board(ifstream* inFilePtr, ofstream* outFilePtr, bool rotationEnabled): m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr), m_rotationEnabled(rotationEnabled){
 		m_solution = nullptr;
 	}
 
@@ -52,6 +53,6 @@ public:
 	// Try to solve. if solution exist, put it in m_solution.
 	bool solve();
 
-	void writeResponseToFile();
+	void writeResponseToFile() const;
 };
 

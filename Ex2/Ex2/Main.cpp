@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	Board board = Board(&inFile, &outFile);
+	Board board = Board(&inFile, &outFile, true);
 	board.readBoard();
 	board.solve();
 	board.writeResponseToFile();

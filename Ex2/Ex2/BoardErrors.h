@@ -29,6 +29,7 @@ class BoardErrors
 	vector<string> m_nonIntID;
 	vector<int> m_wrongLineID; // ids with error
 	vector<string> m_wrongLineString; // ids with error - original input line
+	vector<string> m_missingCorners; //missing corners vector //TODO: add api, and report it in output
 
 public:
 	bool hasErrors() const;

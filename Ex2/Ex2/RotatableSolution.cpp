@@ -69,6 +69,8 @@ bool RotatableSolution::solve(int i, int j)
 			}
 		}
 
+		//TODO: instead of iter tried before - keep an bool array triedBottomRightTypes[3][3] to mark if used this combination of Bottom-Right before
+
 		// avoid trying a similar piece to one we tried before
 		list<PieceRotationContainer>::iterator iterTriedBefore = optionsList.begin();
 		bool triedThisPieceTypeBefore = false;
