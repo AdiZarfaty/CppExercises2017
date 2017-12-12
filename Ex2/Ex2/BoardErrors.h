@@ -16,7 +16,7 @@ using std::ofstream;
 class BoardErrors
 {
 	int m_numberOfPieces = 0;
-	int m_sumOfEdges = 0; //TODO: move to board
+	int m_sumOfEdges = 0; //TODO: move to board 
 	bool m_error = false;
 	bool m_firstLineIsInWrongFormat = false;
 	bool m_wrongSumOfEdges = false;
@@ -29,16 +29,20 @@ class BoardErrors
 	vector<string> m_nonIntID;
 	vector<int> m_wrongLineID; // ids with error
 	vector<string> m_wrongLineString; // ids with error - original input line
-	vector<string> m_missingCorners; //missing corners vector //TODO: add api, and report it in output
+	vector<string> m_missingCorners{ "TL", "TR", "BL", "BR" }; //missing corners vector //TODO: add api, and report it in output
 
 public:
 	bool hasErrors() const;
 	void checkCorners();
-	void printErrors(ofstream& outFile) const;
+	void printErrors(ofstream& outFile, bool rotation) const;
 	void sortErrors();
 	void setNumberOfPieces(int num)
 	{
 		m_numberOfPieces = num;
+	}
+
+	vector<string>& getMissingCorners() {
+		return m_missingCorners;
 	}
 
 	int& sumOfEdges()

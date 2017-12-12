@@ -17,25 +17,61 @@ using std::invalid_argument;
 
 int main(int argc, char *argv[])
 {
+	bool rotate;
+	ifstream inFile;
+	ofstream outFile;
 	// debug - catch heap corruptions: _CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
-	if (argc != 3) {
-		cerr << "ERROR: expecting 2 command line arguments" << endl;
+	if (argc > 4) {
+		cerr << "ERROR: expecting at most 3 command line arguments" << endl;
 			return 0;
 	}
-	ifstream inFile;
-	inFile.open(argv[1]);
-	if (!inFile) {
-		cerr << "ERROR: Unable to open input file " << argv[1] << endl;
-		return 0;
+	if (argc == 3) {
+		rotate = false;
+		inFile.open(argv[1]);
+		if (!inFile) {
+			cerr << "ERROR: Unable to open input file " << argv[1] << endl;
+			return 0;
+		}
+		outFile.open(argv[2]);
+		if (!outFile) {
+			cerr << "ERROR: Unable to open output file " << argv[2] << endl;
+			return 0;
+		}
 	}
-	ofstream outFile;
-	outFile.open(argv[2]);
-	if (!outFile) {
-		cerr << "ERROR: Unable to open output file " << argv[2] << endl;
-		return 0;
+	else {
+		bool infilefound = false;
+		bool outfilefound = false;
+		for (int i = 1; i < 4; i++) {
+			if (argv[i] != "-rotate") {
+				if (infilefound)
+				{
+					outFile.open(argv[2]);
+					if (!outFile) {
+						cerr << "ERROR: Unable to open output file " << argv[2] << endl;
+						return 0;
+					}
+					outfilefound = true;
+				}
+				else
+				{
+					inFile.open(argv[1]);
+					if (!inFile) {
+						cerr << "ERROR: Unable to open input file " << argv[1] << endl;
+						return 0;
+					}
+					infilefound = true;
+				}
+			}
+			else {
+				rotate = true;
+			}
+		}
+		if (!infilefound || !outfilefound || !rotate) {
+			cerr << "ERROR: arguments provided are incorrect" << endl;
+			return 0;
+		}
 	}
-
-	Board board = Board(&inFile, &outFile, true);
+	Board board = Board(&inFile, &outFile, rotate);
 	board.readBoard();
 	board.solve();
 	board.writeResponseToFile();

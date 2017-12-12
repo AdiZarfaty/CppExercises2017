@@ -53,20 +53,33 @@ void Board::readBoard() {
 					if (!ss.fail()) {
 						if (sides[j] != 1 && sides[j] != -1 && sides[j] != 0) {
 							m_error.addWrongLine(id, line);
-							ids[id - 1]--;
 							error = true;
 							break;
 						}
 						else if (sides[j] == 0) {
-							m_numOfStraightEdges++;
+							if (m_rotationEnabled) {
+								m_numOfStraightEdges++;
+							}
+							else {
+								switch (j) {
+								case 0: m_numOfStraightEdges_left++;
+									break;
+								case 1: m_numOfStraightEdges_top++;
+									break;
+								case 2: m_numOfStraightEdges_right++;
+									break;
+								case 3: m_numOfStraightEdges_bottom++;
+								}
+							}
 						}
 						else {
 							m_error.sumOfEdges() += sides[j];
 						}
+						if (j == 3 && ss.eof() && !m_rotationEnabled)
+							setCorner(sides[0], sides[1], sides[2], sides[3]);
 					}
 					else {
 						m_error.addWrongLine(id, line);
-						ids[id - 1]--;
 						error = true;
 						break;
 					}
@@ -75,7 +88,6 @@ void Board::readBoard() {
 					string tmp; ss >> tmp;
 					if (!ss.fail()) {
 						m_error.addWrongLine(id, line);
-						ids[id - 1]--;
 						break;
 					}
 				}
@@ -96,7 +108,11 @@ void Board::readBoard() {
 			}
 		}
 		m_inFilePtr->close();
-		if (m_numOfStraightEdges % 2 != 0) {
+		if (m_numOfStraightEdges % 2 != 0 && m_rotationEnabled) {
+			m_error.setWrongNumberOfStraightEdges();
+		}
+		if ((m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0
+			|| m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0) && m_rotationEnabled) {
 			m_error.setWrongNumberOfStraightEdges();
 		}
 		if (m_error.sumOfEdges() != 0) {
@@ -109,8 +125,10 @@ void Board::readBoard() {
 		}
 		if (!m_error.hasErrors())
 		{
+			if (m_rotationEnabled) {
+				setCornerRotational();
+			}
 			setEqualityClasses();
-			setCorner();
 		}
 		else
 		{
@@ -123,11 +141,34 @@ void Board::readBoard() {
 
 }
 
-void Board::setCorner() {
+void Board::setCorner(int left, int top, int right, int bottom) {
+	if (top == 0 && left == 0) {
+		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin()+0);
+	}
+	if (top == 0 && right == 0) {
+		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin() + 1);
+	}
+	if (bottom == 0 && left == 0) {
+		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin() + 2);
+	}
+	if (bottom == 0 && right == 0) {
+		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin() + 3);
+	}
+}
+
+void Board::setCornerRotational() {
 	int count = 0;
 	if (m_eqClasses.getEQClass(0,0).size() >= 4) {
 		m_error.setFourCorners();
+		m_error.getMissingCorners() = {};
 	}
+	else {
+		for (int i = 0; i < m_eqClasses.getEQClass(0, 0).size(); i++) {
+			m_error.getMissingCorners().pop_back();
+		}
+	}
+	/*check if there are atleast 2 pieces with 3 straight edges, 
+	which can make for the 2 corners of a single line solution*/
 	for (PieceRotationContainer rc : m_eqClasses.getEQClass(0, 0)) {
 		if (rc.getRight() == 0 || rc.getBottom() == 0) {
 			count++;
@@ -141,10 +182,18 @@ void Board::setCorner() {
 }
 
 void Board::setEqualityClasses() {
-	for (Piece *piecePtr : m_allPieces) {
-		for (int i = 0; i < 4; i++) {
-			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
+	if (m_rotationEnabled) {
+		for (Piece *piecePtr : m_allPieces) {
+			PieceRotationContainer rc = PieceRotationContainer(piecePtr, 0);
 			m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
+		}
+	}
+	else {
+		for (Piece *piecePtr : m_allPieces) {
+			for (int i = 0; i < 4; i++) {
+				PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
+				m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
+			}
 		}
 	}
 }
@@ -210,7 +259,7 @@ void Board::writeResponseToFile() const
 	ofstream& outstream = *m_outFilePtr;
 	if (m_error.hasErrors())
 	{
-		m_error.printErrors(outstream);
+		m_error.printErrors(outstream, m_rotationEnabled);
 	}
 	else
 	{

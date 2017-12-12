@@ -18,7 +18,7 @@ void BoardErrors::sortErrors() {
 	sort(m_missingID.begin(), m_missingID.end());
 }
 
-void BoardErrors::printErrors(ofstream& outFile) const
+void BoardErrors::printErrors(ofstream& outFile, bool rotation) const
 {
 	if (m_firstLineIsInWrongFormat) {
 		outFile << "ERROR: first line is in a wrong format" << endl;
@@ -62,11 +62,23 @@ void BoardErrors::printErrors(ofstream& outFile) const
 		}
 		//TODO: need to report missing corners
 		if (m_wrongNumberOfStraightEdges && m_wrongID.empty() && m_nonIntID.empty()
-			&& m_wrongLineID.empty())
+			&& m_wrongLineID.empty()) {
 			outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;
+		}
+		if (!rotation) {
+			for (string corner : m_missingCorners) {
+				outFile << "Cannot solve puzzle: missing corner element " << corner << endl;
+			}
+		}
+		else {
+			if (m_missingCorners.size() > 0) {
+				outFile << "Cannot solve puzzle: only " << 4 - m_missingCorners.size() << " corners available"<< endl;
+			}
+		}
 		if (m_wrongSumOfEdges && m_wrongID.empty() && m_nonIntID.empty()
-			&& m_wrongLineID.empty())
+			&& m_wrongLineID.empty()) {
 			outFile << "Cannot solve puzzle: sum of edges is not zero" << endl;
+		}
 		outFile.close();
 	}
 }

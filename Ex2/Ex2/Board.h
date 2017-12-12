@@ -20,6 +20,10 @@ using std::to_string;
 
 class Board {
 	bool m_rotationEnabled; //should we try rotation or not
+	int m_numOfStraightEdges_right = 0;
+	int m_numOfStraightEdges_left = 0;
+	int m_numOfStraightEdges_top = 0;
+	int m_numOfStraightEdges_bottom = 0;
 	ifstream* m_inFilePtr; // not owned by board
 	ofstream* m_outFilePtr; // not owned by board
 	int m_numberOfPieces;
@@ -49,7 +53,8 @@ public:
 	}
 
 	void readBoard();
-	void setCorner();
+	void setCorner(int left, int top, int right, int bottom);
+	void setCornerRotational();
 	// Try to solve. if solution exist, put it in m_solution.
 	bool solve();
 
