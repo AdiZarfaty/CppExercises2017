@@ -41,10 +41,10 @@ bool RotatableSolution::solve(int i, int j)
 	list<PieceRotationContainer>::iterator iter = optionsList.begin();
 	int optionListLength = (int)optionsList.size();
 
-	int pieceTryiesCounter = 0; // for debug
+	int pieceTriesCounter = 0; // for debug
 
 	while (iter != optionsList.end()) {
-		pieceTryiesCounter++; // debug
+		pieceTriesCounter++; // debug
 
 		PieceRotationContainer tilePtr = *iter;
 
@@ -92,7 +92,7 @@ bool RotatableSolution::solve(int i, int j)
 		//TODO: pot in remarks- this is for debug
 		if ((m_heigt*m_width) - (i*m_width + j) > 1)
 		{
-			debugGetSolutionAsString(i, j, pieceTryiesCounter, optionListLength);
+			debugGetSolutionAsString(i, j, pieceTriesCounter, optionListLength);
 		}
 		// end of debug
 
@@ -125,7 +125,7 @@ bool RotatableSolution::solve(int i, int j)
 
 time_t global_last_debug_write_to_screen = time(NULL);
 
-string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int pieceTryiesCounter, int optionListLength)
+string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int pieceTriesCounter, int optionListLength)
 {
 
 	if (m_triedSolutionCounter.size() != m_heigt) //first run
@@ -140,7 +140,7 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 		m_optionsCounter.at(posi).resize(m_width);
 	}
 
-	m_triedSolutionCounter.at(posi).at(posj) = pieceTryiesCounter;
+	m_triedSolutionCounter.at(posi).at(posj) = pieceTriesCounter;
 	m_optionsCounter.at(posi).at(posj) = optionListLength;
 
 	time_t diff = time(NULL) - global_last_debug_write_to_screen; //time(nullptr)->tm_sec - global_last_debug_write_to_screen->tm_sec;
@@ -152,7 +152,7 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 
 	std::stringstream output;
 	output << "trying (" << m_heigt << " x " << m_width << ") board" << endl; //debug !
-	output << "pos:(" << posi << "," << posj << ") trying piece " << pieceTryiesCounter + 1 << " out of " << optionListLength << endl; //debug !
+	output << "pos:(" << posi << "," << posj << ") trying piece " << pieceTriesCounter << " out of " << optionListLength << endl; //debug !
 
 	for (int i = 0; i < m_heigt; i++)
 	{
@@ -185,7 +185,7 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 			}
 			else
 			{
-				perc = 100;
+				perc = 0;
 			}
 			if (perc < 10)
 			{
