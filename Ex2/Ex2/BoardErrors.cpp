@@ -6,6 +6,7 @@ bool BoardErrors::hasErrors() const
 	return m_error;
 }
 
+//checks if the conditionos were met for having corners pieces
 void BoardErrors::checkCorners()
 {
 	//TODO: need to check with/without rotation
@@ -60,7 +61,6 @@ void BoardErrors::printErrors(ofstream& outFile, bool rotation) const
 				outFile << endl;
 			}
 		}
-		//TODO: need to report missing corners
 		if (m_wrongNumberOfStraightEdges && m_wrongID.empty() && m_nonIntID.empty()
 			&& m_wrongLineID.empty()) {
 			outFile << "Cannot solve puzzle: wrong number of straight edges" << endl;

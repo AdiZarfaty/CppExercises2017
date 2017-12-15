@@ -5,7 +5,7 @@
 using std::list;
 
 template <class T>
-class EQClasses //TODO: ADI instead of list<Piece*> we will use RotationContainer class - I am using templates instead
+class EQClasses
 {
 	list<T> m_EQClasses[3][3];
 public:

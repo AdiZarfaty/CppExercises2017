@@ -206,7 +206,7 @@ void Board::setEqualityClasses() {
 	}
 }
 
-bool Board::solve()
+bool Board::solve() //TODO: consider building frame first. need to tweek solve(i,j) as well to check if fits to right and bottom (if they are filled)
 {
 	if (m_error.hasErrors())
 	{
