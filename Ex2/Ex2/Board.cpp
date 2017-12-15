@@ -142,17 +142,25 @@ void Board::readBoard() {
 }
 
 void Board::setCorner(int left, int top, int right, int bottom) {
+	string corner;
+
 	if (top == 0 && left == 0) {
-		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin()+0);
+		corner = "TL";
 	}
 	if (top == 0 && right == 0) {
-		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin() + 1);
+		corner = "TR";
 	}
 	if (bottom == 0 && left == 0) {
-		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin() + 2);
+		corner = "BL";
 	}
 	if (bottom == 0 && right == 0) {
-		m_error.getMissingCorners().erase(m_error.getMissingCorners().begin() + 3);
+		corner = "BR";
+	}
+
+	vector<string>::iterator result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
+	if (result != m_error.getMissingCorners().end())
+	{
+		m_error.getMissingCorners().erase(result);
 	}
 }
 
