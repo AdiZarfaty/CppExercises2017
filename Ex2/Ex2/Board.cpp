@@ -58,7 +58,7 @@ void Board::readBoard() {
 						}
 						else if (sides[j] == 0) {
 							if (m_rotationEnabled) {
-								m_numOfStraightEdges++;
+								m_numOfStraightEdges++; //TODO: is this wrong ? counting same piece 4 times??
 							}
 							else {
 								switch (j) {
@@ -76,7 +76,7 @@ void Board::readBoard() {
 							m_error.sumOfEdges() += sides[j];
 						}
 						if (j == 3 && ss.eof() && !m_rotationEnabled)
-							setCorner(sides[0], sides[1], sides[2], sides[3]);
+							setCorner(sides[0], sides[1], sides[2], sides[3]); //TODO: maybe move this down
 					}
 					else {
 						m_error.addWrongLine(id, line);
@@ -111,7 +111,7 @@ void Board::readBoard() {
 		if (m_numOfStraightEdges % 2 != 0 && m_rotationEnabled) {
 			m_error.setWrongNumberOfStraightEdges();
 		}
-		if ((m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0
+		if ((m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 //TODO: what? what if rotation ??
 			|| m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0) && m_rotationEnabled) {
 			m_error.setWrongNumberOfStraightEdges();
 		}
@@ -141,8 +141,9 @@ void Board::readBoard() {
 
 }
 
+//TODO: is this still relevant now that they are saved in eqclass ?
 void Board::setCorner(int left, int top, int right, int bottom) {
-	string corner;
+	string corner = "";
 
 	if (top == 0 && left == 0) {
 		corner = "TL";
@@ -157,10 +158,13 @@ void Board::setCorner(int left, int top, int right, int bottom) {
 		corner = "BR";
 	}
 
-	vector<string>::iterator result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
-	if (result != m_error.getMissingCorners().end())
+	if (corner != "")
 	{
-		m_error.getMissingCorners().erase(result);
+		vector<string>::iterator result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
+		if (result != m_error.getMissingCorners().end())
+		{
+			m_error.getMissingCorners().erase(result);
+		}
 	}
 }
 
@@ -190,20 +194,84 @@ void Board::setCornerRotational() {
 }
 
 void Board::setEqualityClasses() {
-	if (m_rotationEnabled) {
-		for (Piece *piecePtr : m_allPieces) {
-			PieceRotationContainer rc = PieceRotationContainer(piecePtr, 0);
+	for (Piece *piecePtr : m_allPieces) {
+
+		int maxRotation;
+		if (m_rotationEnabled)
+		{
+			maxRotation = 4;
+		}
+		else
+		{
+			maxRotation = 1;
+		}
+
+		for (int i = 0; i < maxRotation; i++) {
+			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
 			m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
 		}
-	}
-	else {
-		for (Piece *piecePtr : m_allPieces) {
-			for (int i = 0; i < 4; i++) {
-				PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
-				m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
+
+		bool isCorner = false;
+		bool isEdge = false;
+
+		for (int i = 0; i < 4; i++) {
+			if (piecePtr->getFace(i) == 0)
+			{
+				isEdge = true;
+
+				if (piecePtr->getFace(i + 1) == 0)
+				{
+					isCorner = true;
+				}
 			}
 		}
+
+		PieceRotationContainer rc = PieceRotationContainer(piecePtr, 0);
+
+		if (isCorner)
+		{
+			m_eqClasses.getCornerParts().push_back(rc); // save every piece just once in these list
+		}
+
+		if (isEdge)
+		{
+			m_eqClasses.getFrameParts().push_back(rc); // save every piece just once in these list
+		}
 	}
+}
+
+bool Board::IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int columns)
+{
+	if (!m_rotationEnabled)
+	{
+		if ((m_numOfStraightEdges_right < rows)
+			|| (m_numOfStraightEdges_top < columns))  // left/bottom are symetric
+		{
+			return false;
+		}
+	}
+
+	// calc the needed pieces to build the frame.
+	int neededCornersCount;
+	int neededFramePartsCount;
+	if ((rows == 1) || (columns == 1))
+	{
+		neededCornersCount = 2;
+		neededFramePartsCount = std::max(rows, columns);
+	}
+	else
+	{
+		neededCornersCount = 4;
+		neededFramePartsCount = rows*columns - ((rows - 2) * (columns - 2));
+	}
+
+	if ((m_eqClasses.getFrameParts().size() < neededFramePartsCount)
+		|| (m_eqClasses.getCornerParts().size() < neededCornersCount))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool Board::solve() //TODO: consider building frame first. need to tweek solve(i,j) as well to check if fits to right and bottom (if they are filled)
@@ -213,7 +281,6 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 		return false;
 	}
 
-	int columns;
 	bool success = false;
 	bool numOfStraightEdgesWasOkAtLeastOnce = false;
 
@@ -224,34 +291,28 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 			continue; // no such board exist
 		}
 
-		columns = m_numberOfPieces / rows;		
-		//TODO: ADI no longer relevant
+		int columns = m_numberOfPieces / rows;		
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
+		if (!IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(rows, columns))
+		{
+			continue;
+		}
 
+		numOfStraightEdgesWasOkAtLeastOnce = true;
 
-		//if ((m_numOfStraightEdges_right >= (rows))
-		//	&& (m_numOfStraightEdges_top >= (columns)))
-		//{
+		m_solution = new RotatableSolution(rows, columns, &m_eqClasses, m_rotationEnabled);
 
-		//TODO: Still need to fix number of straight edges test
+		success = m_solution->solve();
 
-			numOfStraightEdgesWasOkAtLeastOnce = true;
-
-			m_solution = new RotatableSolution(rows, columns, &m_eqClasses, m_rotationEnabled);
-
-			success = m_solution->solve();
-
-			if (success)
-			{
-				break;
-			}
-			else
-			{
-				delete m_solution;
-				m_solution = nullptr;
-			}
-		//}
-		
+		if (success)
+		{
+			break;
+		}
+		else
+		{
+			delete m_solution;
+			m_solution = nullptr;
+		}	
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)

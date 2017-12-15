@@ -35,6 +35,8 @@ class Board {
 
 	// fill the EQClasses with the pieces
 	void setEqualityClasses();
+
+	bool IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int columns);
 public:
 	Board(ifstream* inFilePtr, ofstream* outFilePtr, bool rotationEnabled): m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr), m_rotationEnabled(rotationEnabled){
 		m_solution = nullptr;
