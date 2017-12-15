@@ -31,28 +31,45 @@ bool RotatableSolution::solve(int i, int j)
 
 	list<PieceRotationContainer>& optionsList = m_Pieces->getEQClass(leftFit, topFit);
 
+	//we keep here a bool if we used a piece with [right edge + 1][bottom edge + 1].
+	//top and left are dictaded from the previous calls to solve(). 
+	//if we tried a type before, no need to try it again.
+	bool triedRightBottomTypes[3][3] = { false, false, false, false, false, false, false, false, false };
+
 	bool success = false;
 
 	list<PieceRotationContainer>::iterator iter = optionsList.begin();
+	int optionListLength = (int)optionsList.size();
 
 	int pieceTryiesCounter = 0; // for debug
 
 	while (iter != optionsList.end()) {
+		pieceTryiesCounter++; // debug
+
+		PieceRotationContainer tilePtr = *iter;
+
 		// go to the first unused tile
-		if (iter->GetPiece()->isUsed())
+		if (tilePtr.GetPiece()->isUsed())
+		{
+			
+			iter++;
+			continue;
+		}
+
+		// if tried this type before, skip it
+		if (triedRightBottomTypes[tilePtr.GetPiece()->getRight() + 1][tilePtr.GetPiece()->getBottom() + 1])
 		{
 			iter++;
 			continue;
 		}
 
-		PieceRotationContainer tilePtr = *iter; // take the tile
+		triedRightBottomTypes[tilePtr.GetPiece()->getRight() + 1][tilePtr.GetPiece()->getBottom() + 1] = true;
 
 		if (i == (m_heigt - 1)) // Last Row
 		{
 			if (tilePtr.GetPiece()->getBottom() != 0)
 			{
 				// tile mismatch at bottom
-				pieceTryiesCounter++;
 				iter++;
 				continue;
 			}
@@ -63,57 +80,21 @@ bool RotatableSolution::solve(int i, int j)
 			if (tilePtr.GetPiece()->getRight() != 0)
 			{
 				// tile mismatch at right
-				pieceTryiesCounter++;
 				iter++;
 				continue;
 			}
-		}
-
-		//TODO: instead of iter tried before - keep an bool array triedBottomRightTypes[3][3] to mark if used this combination of Bottom-Right before
-
-		// avoid trying a similar piece to one we tried before
-		list<PieceRotationContainer>::iterator iterTriedBefore = optionsList.begin();
-		bool triedThisPieceTypeBefore = false;
-
-		int optionListLength = (int)optionsList.size();
-
-		while (iterTriedBefore != iter) {
-			// go to unused tile that we tried before
-			if (iterTriedBefore->GetPiece()->isUsed())
-			{
-				iterTriedBefore++;
-				continue;
-			}
-
-			if (((iter)->getBottom() == (iterTriedBefore)->getBottom())
-				&& ((iter)->getRight() == (iterTriedBefore)->getRight())) //TODO: can make PieceRotationContainer::EqualEdges
-			{
-				//we tried this "type" of piece before and it did not work
-				triedThisPieceTypeBefore = true;
-				break;
-			}
-			else
-			{
-				iterTriedBefore++;
-			}
-		}
-
-		if (triedThisPieceTypeBefore)
-		{
-			pieceTryiesCounter++;
-			iter++;
-			continue;
 		}
 
 		tilePtr.GetPiece()->setUsed(true); // mark the piece as used
 		internalAccessPiecePtr(i, j) = tilePtr; // copy the rotation container to the solution
 
 
-												// for debug
-												if ((m_heigt*m_width) - (i*m_width + j) > 1)
-												{
-													debugGetSolutionAsString(i, j, pieceTryiesCounter, optionListLength);
-												}
+		//TODO: pot in remarks- this is for debug
+		if ((m_heigt*m_width) - (i*m_width + j) > 1)
+		{
+			debugGetSolutionAsString(i, j, pieceTryiesCounter, optionListLength);
+		}
+		// end of debug
 
 		if ((i == (m_heigt - 1)) && (j == (m_width - 1)))
 		{
@@ -124,8 +105,7 @@ bool RotatableSolution::solve(int i, int j)
 			int nextj = (j + 1) % m_width; // at m_width go back to 0
 			int nexti = i + ((j + 1) / m_width);
 
-			success = solve(nexti, nextj); //send by copy the current state of remaining pieces
-
+			success = solve(nexti, nextj);
 		}
 		if (success)
 		{
@@ -137,7 +117,6 @@ bool RotatableSolution::solve(int i, int j)
 			// mark as unsolved (avoid garbage)
 			internalAccessPiecePtr(i, j).GetPiece()->setUsed(false); // mark the piece as unused
 			iter++;
-			pieceTryiesCounter++;
 		}
 	}
 
