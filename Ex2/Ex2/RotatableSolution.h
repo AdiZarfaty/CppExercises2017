@@ -22,12 +22,12 @@ class RotatableSolution
 	EQClasses<PieceRotationContainer>* m_Pieces;
 	vector<vector<PieceRotationContainer>> m_puzzleSolution;
 
-	const PieceRotationContainer internalGetPiecePtr(int row, int column) const
+	const PieceRotationContainer internalGetPieceRotationContainer(int row, int column) const
 	{
 		return m_puzzleSolution.at(row).at(column);
 	}
 
-	PieceRotationContainer& internalAccessPiecePtr(int row, int column)
+	PieceRotationContainer& internalAccessPieceRotationContainer(int row, int column)
 	{
 		return m_puzzleSolution.at(row).at(column);
 	}
@@ -50,7 +50,7 @@ public:
 		{
 			m_puzzleSolution[i].resize(m_width); //TODO: empty creation can be done with resize ? no need for loop to init ?
 			for (int j = 0; j < m_width; j++) {
-				internalAccessPiecePtr(i, j).SetPiece(nullptr);
+				internalAccessPieceRotationContainer(i, j).SetPiece(nullptr);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ public:
 			return PieceRotationContainer();
 		}
 
-		return internalGetPiecePtr(row, column);
+		return internalGetPieceRotationContainer(row, column);
 	}
 
 	int getHeight() const

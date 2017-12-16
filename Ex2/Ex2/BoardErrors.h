@@ -16,7 +16,6 @@ using std::ofstream;
 class BoardErrors
 {
 	int m_numberOfPieces = 0;
-	int m_sumOfEdges = 0; //TODO: move to board 
 	bool m_error = false;
 	bool m_firstLineIsInWrongFormat = false;
 	bool m_wrongSumOfEdges = false;
@@ -35,7 +34,7 @@ public:
 	bool hasErrors() const;
 	void checkCorners();
 	void printErrors(ofstream& outFile, bool rotation) const;
-	void sortErrors();
+	void sortMissingIDErrors();
 	void setNumberOfPieces(int num)
 	{
 		m_numberOfPieces = num;
@@ -43,11 +42,6 @@ public:
 
 	vector<string>& getMissingCorners() {
 		return m_missingCorners;
-	}
-
-	int& sumOfEdges()
-	{
-		return m_sumOfEdges;
 	}
 
 	void setWrongSumOfEdges() {

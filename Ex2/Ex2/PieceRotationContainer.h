@@ -11,7 +11,7 @@ public:
 
 	}
 
-	PieceRotationContainer(Piece* pieceptr, int rotation) : m_piecePtr(pieceptr), m_rotation((rotation % 360) / 90) {
+	PieceRotationContainer(Piece* pieceptr, int rotationInDegrees) : m_piecePtr(pieceptr), m_rotation((rotationInDegrees % 360) / 90) {
 
 	}
 
@@ -29,6 +29,14 @@ public:
 	void SetPiece(Piece* ptr)
 	{
 		m_piecePtr = ptr;
+	}
+
+	bool isUsed() const {
+		return m_piecePtr->isUsed();
+	}
+
+	void setUsed(bool val) {
+		m_piecePtr->setUsed(val);
 	}
 
 	int getId() const {

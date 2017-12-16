@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
 		bool infilefound = false;
 		bool outfilefound = false;
 		for (int i = 1; i < 4; i++) {
-			if (argv[i] != "-rotate") {
+			if (string(argv[i]) != "-rotate") {
 				if (infilefound)
 				{
-					outFile.open(argv[2]);
+					outFile.open(argv[i]);
 					if (!outFile) {
 						cerr << "ERROR: Unable to open output file " << argv[2] << endl;
 						return 0;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 				}
 				else
 				{
-					inFile.open(argv[1]);
+					inFile.open(argv[i]);
 					if (!inFile) {
 						cerr << "ERROR: Unable to open input file " << argv[1] << endl;
 						return 0;

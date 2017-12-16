@@ -56,29 +56,27 @@ void Board::readBoard() {
 							error = true;
 							break;
 						}
-						else if (sides[j] == 0) {
-							if (m_rotationEnabled) {
-								m_numOfStraightEdges++; //TODO: is this wrong ? counting same piece 4 times??
+						else if (sides[j] == 0)
+						{
+							m_numOfStraightEdges++;
+
+							switch (j){
+							case 0: m_numOfStraightEdges_left++;
+								break;
+							case 1: m_numOfStraightEdges_top++;
+								break;
+							case 2: m_numOfStraightEdges_right++;
+								break;
+							case 3: m_numOfStraightEdges_bottom++;
 							}
-							else {
-								switch (j) {
-								case 0: m_numOfStraightEdges_left++;
-									break;
-								case 1: m_numOfStraightEdges_top++;
-									break;
-								case 2: m_numOfStraightEdges_right++;
-									break;
-								case 3: m_numOfStraightEdges_bottom++;
-								}
-							}
+
 						}
 						else {
-							m_error.sumOfEdges() += sides[j];
+							m_sumOfEdges += sides[j];
 						}
-						if (j == 3 && ss.eof() && !m_rotationEnabled)
-							setCorner(sides[0], sides[1], sides[2], sides[3]); //TODO: maybe move this down
 					}
-					else {
+					else 
+					{
 						m_error.addWrongLine(id, line);
 						error = true;
 						break;
@@ -108,14 +106,24 @@ void Board::readBoard() {
 			}
 		}
 		m_inFilePtr->close();
-		if (m_numOfStraightEdges % 2 != 0 && m_rotationEnabled) {
-			m_error.setWrongNumberOfStraightEdges();
+
+		if (m_rotationEnabled)
+		{
+			if ((m_numOfStraightEdges % 2) != 0) 
+			{
+				m_error.setWrongNumberOfStraightEdges();
+			}
 		}
-		if ((m_numOfStraightEdges_right - m_numOfStraightEdges_left != 0 //TODO: what? what if rotation ??
-			|| m_numOfStraightEdges_top - m_numOfStraightEdges_bottom != 0) && m_rotationEnabled) {
-			m_error.setWrongNumberOfStraightEdges();
+		else
+		{
+			if ((m_numOfStraightEdges_right != m_numOfStraightEdges_left)
+				|| (m_numOfStraightEdges_top != m_numOfStraightEdges_bottom))
+			{
+				m_error.setWrongNumberOfStraightEdges();
+			}
 		}
-		if (m_error.sumOfEdges() != 0) {
+
+		if (m_sumOfEdges != 0) {
 			m_error.setWrongSumOfEdges();
 		}
 		for (int i = 0; i < m_numberOfPieces; i++) {
@@ -123,17 +131,21 @@ void Board::readBoard() {
 				m_error.addMissingID(i + 1);
 			}
 		}
-		if (!m_error.hasErrors())
+
+		m_error.sortMissingIDErrors();
+
+		setEqualityClasses();
+
+		if (m_rotationEnabled) 
 		{
-			if (m_rotationEnabled) {
-				setCornerRotational();
-			}
-			setEqualityClasses();
+			setCornerRotational();
 		}
 		else
 		{
-			m_error.sortErrors();
+			setCornerNonRotational();
 		}
+		
+
 	}
 	else {
 		m_error.setCouldNotExtractNumElements();
@@ -143,6 +155,11 @@ void Board::readBoard() {
 
 //TODO: is this still relevant now that they are saved in eqclass ?
 void Board::setCorner(int left, int top, int right, int bottom) {
+	if (m_error.getMissingCorners().size() == 0)
+	{
+		return; // no need to run
+	}
+
 	string corner = "";
 
 	if (top == 0 && left == 0) {
@@ -168,27 +185,32 @@ void Board::setCorner(int left, int top, int right, int bottom) {
 	}
 }
 
+void Board::setCornerNonRotational() {
+	for (PieceRotationContainer rc : m_eqClasses.getCornerParts())
+	{
+		setCorner(rc.getLeft(), rc.getTop(), rc.getRight(), rc.getBottom());
+	}
+	if (m_eqClasses.getThreeStraightEdges().size() >= 2) {
+		m_error.setTwoCorners();
+	}
+
+}
+
 void Board::setCornerRotational() {
 	int count = 0;
-	if (m_eqClasses.getEQClass(0,0).size() >= 4) {
+	if (m_eqClasses.getCornerParts().size() >= 4) {
 		m_error.setFourCorners();
-		m_error.getMissingCorners() = {};
+		m_error.getMissingCorners().clear();
 	}
 	else {
-		for (int i = 0; i < m_eqClasses.getEQClass(0, 0).size(); i++) {
-			m_error.getMissingCorners().pop_back();
+		for (int i = 0; i < m_eqClasses.getCornerParts().size(); i++) {
+			m_error.getMissingCorners().pop_back(); // so that the count will reflect how many corners are missing
 		}
 	}
 	/*check if there are atleast 2 pieces with 3 straight edges, 
 	which can make for the 2 corners of a single line solution*/
-	for (PieceRotationContainer rc : m_eqClasses.getEQClass(0, 0)) {
-		if (rc.getRight() == 0 || rc.getBottom() == 0) {
-			count++;
-			if (count = 2) {
-				m_error.setTwoCorners();
-				break;
-			}
-		}
+	if (m_eqClasses.getThreeStraightEdges().size() >= 2) {
+		m_error.setTwoCorners();
 	}
 	m_error.checkCorners();
 }
@@ -207,26 +229,36 @@ void Board::setEqualityClasses() {
 		}
 
 		for (int i = 0; i < maxRotation; i++) {
-			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i);
+			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i * 90);
 			m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
 		}
 
-		bool isCorner = false;
 		bool isEdge = false;
+		bool isCorner = false;
+		bool isThreeStraightEdges = false;
 
 		for (int i = 0; i < 4; i++) {
 			if (piecePtr->getFace(i) == 0)
 			{
 				isEdge = true;
-
 				if (piecePtr->getFace(i + 1) == 0)
 				{
 					isCorner = true;
+					if (piecePtr->getFace(i + 2) == 0)
+					{
+						isThreeStraightEdges = true;
+						break; // no need to try other rotations. got the max result
+					}
 				}
 			}
 		}
 
 		PieceRotationContainer rc = PieceRotationContainer(piecePtr, 0);
+
+		if (isThreeStraightEdges)
+		{
+			m_eqClasses.getThreeStraightEdges().push_back(rc); // save every piece just once in these list
+		}
 
 		if (isCorner)
 		{

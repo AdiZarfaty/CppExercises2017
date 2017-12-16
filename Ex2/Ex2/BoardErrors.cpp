@@ -6,7 +6,7 @@ bool BoardErrors::hasErrors() const
 	return m_error;
 }
 
-//checks if the conditionos were met for having corners pieces
+//checks if the conditions were met for having corners pieces
 void BoardErrors::checkCorners()
 {
 	//TODO: need to check with/without rotation
@@ -15,7 +15,7 @@ void BoardErrors::checkCorners()
 	}
 }
 
-void BoardErrors::sortErrors() {
+void BoardErrors::sortMissingIDErrors() {
 	sort(m_missingID.begin(), m_missingID.end());
 }
 

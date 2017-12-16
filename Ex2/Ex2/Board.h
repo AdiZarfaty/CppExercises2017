@@ -31,7 +31,8 @@ class Board {
 	EQClasses<PieceRotationContainer> m_eqClasses;
 	BoardErrors m_error;
 	RotatableSolution* m_solution;
-	int m_numOfStraightEdges = 0;
+	int m_numOfStraightEdges = 0; //num of all straight edges in all the pieces
+	int m_sumOfEdges = 0; //the sum of all the edges of all the pieces
 
 	// fill the EQClasses with the pieces
 	void setEqualityClasses();
@@ -57,6 +58,7 @@ public:
 	void readBoard();
 	void setCorner(int left, int top, int right, int bottom);
 	void setCornerRotational();
+	void setCornerNonRotational();
 	// Try to solve. if solution exist, put it in m_solution.
 	bool solve();
 

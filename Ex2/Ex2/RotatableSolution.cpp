@@ -17,7 +17,7 @@ bool RotatableSolution::solve(int i, int j)
 	}
 	else
 	{
-		topFit = -internalGetPiecePtr(i - 1, j).GetPiece()->getBottom();
+		topFit = -internalGetPieceRotationContainer(i - 1, j).getBottom();
 	}
 
 	if (j == 0) // First column
@@ -26,7 +26,7 @@ bool RotatableSolution::solve(int i, int j)
 	}
 	else
 	{
-		leftFit = -internalGetPiecePtr(i, j - 1).GetPiece()->getRight();
+		leftFit = -internalGetPieceRotationContainer(i, j - 1).getRight();
 	}
 
 	list<PieceRotationContainer>& optionsList = m_Pieces->getEQClass(leftFit, topFit);
@@ -46,28 +46,27 @@ bool RotatableSolution::solve(int i, int j)
 	while (iter != optionsList.end()) {
 		pieceTriesCounter++; // debug
 
-		PieceRotationContainer tilePtr = *iter;
+		PieceRotationContainer tile = *iter;
 
 		// go to the first unused tile
-		if (tilePtr.GetPiece()->isUsed())
-		{
-			
+		if (tile.isUsed())
+		{			
 			iter++;
 			continue;
 		}
 
 		// if tried this type before, skip it
-		if (triedRightBottomTypes[tilePtr.GetPiece()->getRight() + 1][tilePtr.GetPiece()->getBottom() + 1])
+		if (triedRightBottomTypes[tile.getRight() + 1][tile.getBottom() + 1])
 		{
 			iter++;
 			continue;
 		}
 
-		triedRightBottomTypes[tilePtr.GetPiece()->getRight() + 1][tilePtr.GetPiece()->getBottom() + 1] = true;
+		triedRightBottomTypes[tile.getRight() + 1][tile.getBottom() + 1] = true;
 
 		if (i == (m_heigt - 1)) // Last Row
 		{
-			if (tilePtr.GetPiece()->getBottom() != 0)
+			if (tile.getBottom() != 0)
 			{
 				// tile mismatch at bottom
 				iter++;
@@ -77,7 +76,7 @@ bool RotatableSolution::solve(int i, int j)
 
 		if (j == (m_width - 1))
 		{
-			if (tilePtr.GetPiece()->getRight() != 0)
+			if (tile.getRight() != 0)
 			{
 				// tile mismatch at right
 				iter++;
@@ -85,8 +84,14 @@ bool RotatableSolution::solve(int i, int j)
 			}
 		}
 
-		tilePtr.GetPiece()->setUsed(true); // mark the piece as used
-		internalAccessPiecePtr(i, j) = tilePtr; // copy the rotation container to the solution
+		//debug
+		if (tile.getId() == 8)
+		{
+			int ggg = 1;
+		}
+
+		tile.setUsed(true); // mark the piece as used
+		internalAccessPieceRotationContainer(i, j) = tile; // copy the rotation container to the solution
 
 
 		//TODO: pot in remarks- this is for debug
@@ -114,8 +119,9 @@ bool RotatableSolution::solve(int i, int j)
 		}
 		else
 		{
-			// mark as unsolved (avoid garbage)
-			internalAccessPiecePtr(i, j).GetPiece()->setUsed(false); // mark the piece as unused
+			// mark as unsolved (avoid garbage in the solution)
+			internalAccessPieceRotationContainer(i, j).setUsed(false); // mark the piece as unused
+			internalAccessPieceRotationContainer(i, j).SetPiece(nullptr);
 			iter++;
 		}
 	}
@@ -160,6 +166,8 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 			if (j > 0) {
 				output << "|";
 			}
+
+			// older version - write the id. less usefull
 
 			//const Piece* piecePtr = internalGetPiecePtr(i, j);
 			//int id;

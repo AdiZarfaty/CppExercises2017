@@ -27,15 +27,6 @@ public:
 	short getLeft() const {
 		return m_left;
 	}
-	void setUsed() {
-		m_used = true;
-	}
-	void setUnused() {
-		m_used = false;
-	}
-	bool getUsed() {
-		return m_used;
-	}
 
 	short getFace(int i) const //TODO: maybe this can replace all get_ ?
 	{
