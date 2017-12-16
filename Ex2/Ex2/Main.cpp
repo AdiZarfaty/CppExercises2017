@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 	}
-	Board board = Board(&inFile, &outFile, rotate);
+	Board board(&inFile, &outFile, rotate);
 	board.readBoard();
 	board.solve();
 	board.writeResponseToFile();

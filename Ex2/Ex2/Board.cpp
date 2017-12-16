@@ -90,8 +90,8 @@ void Board::readBoard() {
 					}
 				}
 				if (!m_error.hasErrors()) {
-					Piece* newPiecePtr = new Piece(id, sides[0], sides[1], sides[2], sides[3]);
-					m_allPieces.push_back(newPiecePtr);
+					Piece newPiece(id, sides[0], sides[1], sides[2], sides[3]);
+					m_allPieces.push_back(newPiece);
 				}
 			}
 			else {//if id is a string add a similar error to that of wrong id, but not the same one.
@@ -215,7 +215,7 @@ void Board::checkCornersExistRotational() {
 }
 
 void Board::setEqualityClasses() {
-	for (Piece *piecePtr : m_allPieces) {
+	for (vector<Piece>::iterator it = m_allPieces.begin(); it != m_allPieces.end(); ++it) {
 
 		int maxRotation;
 		if (m_rotationEnabled)
@@ -228,7 +228,7 @@ void Board::setEqualityClasses() {
 		}
 
 		for (int i = 0; i < maxRotation; i++) {
-			PieceRotationContainer rc = PieceRotationContainer(piecePtr, i * 90);
+			PieceRotationContainer rc = PieceRotationContainer(&(*it), i * 90); //pass a pointer to the piece
 			m_eqClasses.getEQClass(rc.getLeft(), rc.getTop()).push_back(rc);
 		}
 
@@ -237,13 +237,13 @@ void Board::setEqualityClasses() {
 		bool isThreeStraightEdges = false;
 
 		for (int i = 0; i < 4; i++) {
-			if (piecePtr->getFace(i) == 0)
+			if (it->getFace(i) == 0)
 			{
 				isEdge = true;
-				if (piecePtr->getFace(i + 1) == 0)
+				if (it->getFace((i + 1) % 4) == 0)
 				{
 					isCorner = true;
-					if (piecePtr->getFace(i + 2) == 0)
+					if (it->getFace((i + 2) % 4) == 0)
 					{
 						isThreeStraightEdges = true;
 						break; // no need to try other rotations. got the max result
@@ -252,7 +252,7 @@ void Board::setEqualityClasses() {
 			}
 		}
 
-		PieceRotationContainer rc = PieceRotationContainer(piecePtr, 0);
+		PieceRotationContainer rc = PieceRotationContainer(&(*it), 0);
 
 		if (isThreeStraightEdges)
 		{
@@ -331,7 +331,8 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 
 		numOfStraightEdgesWasOkAtLeastOnce = true;
 
-		m_solution = new RotatableSolution(rows, columns, &m_eqClasses, m_rotationEnabled);
+		// no need to release, as next assignment will free the prev, and the last one will be freed in the dtor
+		m_solution = std::move(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses, m_rotationEnabled));
 
 		success = m_solution->solve();
 
@@ -339,11 +340,6 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 		{
 			break;
 		}
-		else
-		{
-			delete m_solution;
-			m_solution = nullptr;
-		}	
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
