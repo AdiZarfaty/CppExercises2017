@@ -1,5 +1,6 @@
 #include "RotatableSolution.h"
 
+
 bool RotatableSolution::solve()
 {
 	return solve(0, 0);
@@ -213,7 +214,14 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 	}
 
 
-	system("CLS"); // windows clearscreen
+	// windows clearscreen
+	#ifdef WINDOWS
+	std::system("cls");
+	#else
+	// Assume POSIX
+	std::system("clear");
+	#endif
+
 	std::cout << output.str() << endl << std::flush;
 	//update time of last write
 	global_last_debug_write_to_screen = time(NULL);

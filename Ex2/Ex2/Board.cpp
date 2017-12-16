@@ -343,6 +343,10 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 		{
 			break;
 		}
+		else
+		{
+			m_solution = nullptr;
+		}
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
