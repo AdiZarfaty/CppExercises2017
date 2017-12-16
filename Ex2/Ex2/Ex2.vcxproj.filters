@@ -8,7 +8,6 @@
     <ClCompile Include="PieceEQClasses.cpp" />
     <ClCompile Include="PieceRotationContainer.cpp" />
     <ClCompile Include="RotatableSolution.cpp" />
-    <ClCompile Include="Solution.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
@@ -18,6 +17,5 @@
     <ClInclude Include="PieceEQClasses.h" />
     <ClInclude Include="PieceRotationContainer.h" />
     <ClInclude Include="RotatableSolution.h" />
-    <ClInclude Include="Solution.h" />
   </ItemGroup>
 </Project>
