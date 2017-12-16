@@ -6,6 +6,7 @@
 #include <sstream> // for debug
 #include <iostream> // for debug
 #include <ctime> // for debug
+#include <math.h> // for debug
 
 using std::string; // for debug
 using std::vector;
@@ -43,7 +44,7 @@ class RotatableSolution
 
 	string debugGetSolutionAsString(int i, int j, int pieceTryiesCounter, int optionListLength); // used for debug
 public:
-	RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces, bool rotationEnabled) : m_heigt(height), m_width(width), m_Pieces(pieces), m_puzzleSolution(height), m_rotationEnabled(rotationEnabled){
+	RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces, bool rotationEnabled) : m_heigt(height), m_width(width), m_rotationEnabled(rotationEnabled), m_Pieces(pieces), m_puzzleSolution(height){
 
 		// setup an empty board
 		for (int i = 0; i < m_heigt; i++)

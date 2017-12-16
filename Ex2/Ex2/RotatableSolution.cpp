@@ -84,12 +84,6 @@ bool RotatableSolution::solve(int i, int j)
 			}
 		}
 
-		//debug
-		if (tile.getId() == 8)
-		{
-			int ggg = 1;
-		}
-
 		tile.setUsed(true); // mark the piece as used
 		internalAccessPieceRotationContainer(i, j) = tile; // copy the rotation container to the solution
 
@@ -134,13 +128,13 @@ time_t global_last_debug_write_to_screen = time(NULL);
 string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int pieceTriesCounter, int optionListLength)
 {
 
-	if (m_triedSolutionCounter.size() != m_heigt) //first run
+	if (m_triedSolutionCounter.size() != (unsigned int)m_heigt) //first run
 	{
 		m_triedSolutionCounter.resize(m_heigt);
 		m_optionsCounter.resize(m_heigt);
 	}
 
-	if (m_triedSolutionCounter.at(posi).size() != m_width) //first run
+	if (m_triedSolutionCounter.at(posi).size() != (unsigned int)m_width) //first run
 	{
 		m_triedSolutionCounter.at(posi).resize(m_width);
 		m_optionsCounter.at(posi).resize(m_width);

@@ -189,6 +189,10 @@ void Board::checkCornersExistNonRotational() {
 	{
 		setNonRotateCornerAsFound(rc.getLeft(), rc.getTop(), rc.getRight(), rc.getBottom());
 	}
+	if (m_error.getMissingCorners().size() == 0)
+	{
+		m_error.setFourCorners();
+	}
 	if (m_eqClasses.getThreeStraightEdges().size() >= 2) {
 		m_error.setTwoCorners();
 	}
@@ -196,13 +200,12 @@ void Board::checkCornersExistNonRotational() {
 }
 
 void Board::checkCornersExistRotational() {
-	int count = 0;
 	if (m_eqClasses.getCornerParts().size() >= 4) {
 		m_error.setFourCorners();
 		m_error.getMissingCorners().clear();
 	}
 	else {
-		for (int i = 0; i < m_eqClasses.getCornerParts().size(); i++) {
+		for (unsigned int i = 0; i < m_eqClasses.getCornerParts().size(); i++) {
 			m_error.getMissingCorners().pop_back(); // so that the count will reflect how many corners are missing
 		}
 	}
@@ -283,8 +286,8 @@ bool Board::IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int co
 	}
 
 	// calc the needed pieces to build the frame.
-	int neededCornersCount;
-	int neededFramePartsCount;
+	unsigned int neededCornersCount;
+	unsigned int neededFramePartsCount;
 	if ((rows == 1) || (columns == 1))
 	{
 		neededCornersCount = 2;

@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardErrors.h" />
-    <ClInclude Include="Main.h" />
+    <ClInclude Include="ex2.h" />
     <ClInclude Include="Piece.h" />
     <ClInclude Include="PieceEQClasses.h" />
     <ClInclude Include="PieceRotationContainer.h" />
@@ -156,7 +156,7 @@
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardErrors.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ex2.cpp" />
     <ClCompile Include="Piece.cpp" />
     <ClCompile Include="PieceEQClasses.cpp" />
     <ClCompile Include="PieceRotationContainer.cpp" />

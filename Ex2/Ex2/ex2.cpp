@@ -1,10 +1,6 @@
-// Ex1.cpp : Defines the entry point for the console application.
-//
-
-
 #include <iostream>
 #include <iterator>
-#include<string>
+#include <string>
 #include <stdexcept>
 #include "Board.h"
 
@@ -20,7 +16,7 @@ int main(int argc, char *argv[])
 	bool rotate;
 	ifstream inFile;
 	ofstream outFile;
-	// debug - catch heap corruptions: _CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
+	// for debug - catch heap corruptions: _CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
 	if (argc > 4) {
 		cerr << "ERROR: expecting at most 3 command line arguments" << endl;
 			return 0;
