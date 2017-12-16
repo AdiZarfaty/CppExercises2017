@@ -1,4 +1,4 @@
-COMP = g++
+COMP = g++-5.3.0
 #g++-5.3.0
 #put all your object files here
 OBJS = Board.o BoardErrors.o ex2.o Piece.o PieceEQClasses.o RotatableSolution.o PieceRotationContainer.o
