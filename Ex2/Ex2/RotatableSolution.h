@@ -48,7 +48,7 @@ public:
 		// setup an empty board
 		for (int i = 0; i < m_heigt; i++)
 		{
-			m_puzzleSolution[i].resize(m_width); //TODO: empty creation can be done with resize ? no need for loop to init ?
+			m_puzzleSolution[i].resize(m_width);
 			for (int j = 0; j < m_width; j++) {
 				internalAccessPieceRotationContainer(i, j).SetPiece(nullptr);
 			}
@@ -60,7 +60,8 @@ public:
 
 	}
 
-	bool solve(); // Solve the puzzle
+	// Solve the puzzle
+	bool solve();
 
 	// API to read the solution
 	const PieceRotationContainer getPieceRotationContainer(int row, int column) const
