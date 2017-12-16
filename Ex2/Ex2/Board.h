@@ -56,9 +56,9 @@ public:
 	}
 
 	void readBoard();
-	void setCorner(int left, int top, int right, int bottom);
-	void setCornerRotational();
-	void setCornerNonRotational();
+	void setNonRotateCornerAsFound(int left, int top, int right, int bottom);
+	void checkCornersExistRotational();
+	void checkCornersExistNonRotational();
 	// Try to solve. if solution exist, put it in m_solution.
 	bool solve();
 

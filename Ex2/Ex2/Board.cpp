@@ -138,11 +138,11 @@ void Board::readBoard() {
 
 		if (m_rotationEnabled) 
 		{
-			setCornerRotational();
+			checkCornersExistRotational();
 		}
 		else
 		{
-			setCornerNonRotational();
+			checkCornersExistNonRotational();
 		}
 		
 
@@ -184,7 +184,7 @@ void Board::setNonRotateCornerAsFound(int left, int top, int right, int bottom) 
 	}
 }
 
-void Board::setCornerNonRotational() {
+void Board::checkCornersExistNonRotational() {
 	for (PieceRotationContainer rc : m_eqClasses.getCornerParts())
 	{
 		setNonRotateCornerAsFound(rc.getLeft(), rc.getTop(), rc.getRight(), rc.getBottom());
@@ -195,7 +195,7 @@ void Board::setCornerNonRotational() {
 
 }
 
-void Board::setCornerRotational() {
+void Board::checkCornersExistRotational() {
 	int count = 0;
 	if (m_eqClasses.getCornerParts().size() >= 4) {
 		m_error.setFourCorners();
