@@ -9,7 +9,6 @@ bool BoardErrors::hasErrors() const
 //checks if the conditions were met for having corners pieces
 void BoardErrors::checkCorners()
 {
-	//TODO: need to check with/without rotation
 	if (!m_fourCorners && !m_twoCorners) {
 		m_error = true;
 	}

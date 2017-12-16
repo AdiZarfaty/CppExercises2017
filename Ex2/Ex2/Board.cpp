@@ -192,7 +192,7 @@ void Board::checkCornersExistNonRotational() {
 	if (m_eqClasses.getThreeStraightEdges().size() >= 2) {
 		m_error.setTwoCorners();
 	}
-
+	m_error.checkCorners();
 }
 
 void Board::checkCornersExistRotational() {
