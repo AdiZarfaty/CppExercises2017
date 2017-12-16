@@ -153,8 +153,7 @@ void Board::readBoard() {
 
 }
 
-//TODO: is this still relevant now that they are saved in eqclass ?
-void Board::setCorner(int left, int top, int right, int bottom) {
+void Board::setNonRotateCornerAsFound(int left, int top, int right, int bottom) {
 	if (m_error.getMissingCorners().size() == 0)
 	{
 		return; // no need to run
@@ -188,7 +187,7 @@ void Board::setCorner(int left, int top, int right, int bottom) {
 void Board::setCornerNonRotational() {
 	for (PieceRotationContainer rc : m_eqClasses.getCornerParts())
 	{
-		setCorner(rc.getLeft(), rc.getTop(), rc.getRight(), rc.getBottom());
+		setNonRotateCornerAsFound(rc.getLeft(), rc.getTop(), rc.getRight(), rc.getBottom());
 	}
 	if (m_eqClasses.getThreeStraightEdges().size() >= 2) {
 		m_error.setTwoCorners();
