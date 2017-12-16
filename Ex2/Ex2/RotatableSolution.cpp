@@ -1,6 +1,5 @@
 #include "RotatableSolution.h"
 
-
 bool RotatableSolution::solve()
 {
 	return solve(0, 0);
@@ -39,12 +38,19 @@ bool RotatableSolution::solve(int i, int j)
 	bool success = false;
 
 	list<PieceRotationContainer>::iterator iter = optionsList.begin();
-	int optionListLength = (int)optionsList.size();
 
+	//debug
+	#ifdef DEBUG_SHOW_PROGRESS
+	int optionListLength = (int)optionsList.size();
 	int pieceTriesCounter = 0; // for debug
+	#endif
+
 
 	while (iter != optionsList.end()) {
-		pieceTriesCounter++; // debug
+		// debug
+		#ifdef DEBUG_SHOW_PROGRESS
+		pieceTriesCounter++; 
+		#endif
 
 		PieceRotationContainer tile = *iter;
 
@@ -88,11 +94,10 @@ bool RotatableSolution::solve(int i, int j)
 		internalAccessPieceRotationContainer(i, j) = tile; // copy the rotation container to the solution
 
 
-		//TODO: pot in remarks- this is for debug
-		if ((m_heigt*m_width) - (i*m_width + j) > 1)
-		{
-			debugGetSolutionAsString(i, j, pieceTriesCounter, optionListLength);
-		}
+		//this is for debug
+		#ifdef DEBUG_SHOW_PROGRESS
+		debugGetSolutionAsString(i, j, pieceTriesCounter, optionListLength);
+		#endif
 		// end of debug
 
 		if ((i == (m_heigt - 1)) && (j == (m_width - 1)))
@@ -123,6 +128,7 @@ bool RotatableSolution::solve(int i, int j)
 	return false; // tried all options, no solution for i,j
 }
 
+#ifdef DEBUG_SHOW_PROGRESS
 time_t global_last_debug_write_to_screen = time(NULL);
 
 string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int pieceTriesCounter, int optionListLength)
@@ -207,11 +213,12 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 	}
 
 
-	system("CLS");
+	system("CLS"); // windows clearscreen
 	std::cout << output.str() << endl << std::flush;
 	//update time of last write
 	global_last_debug_write_to_screen = time(NULL);
 
 	return output.str();
 }
+#endif
 
