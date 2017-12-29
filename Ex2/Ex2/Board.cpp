@@ -308,14 +308,13 @@ bool Board::IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int co
 	return true;
 }
 
-bool Board::solve() //TODO: consider building frame first. need to tweek solve(i,j) as well to check if fits to right and bottom (if they are filled)
+bool Board::solve() 
 {
 	if (m_error.hasErrors())
 	{
 		return false;
 	}
 
-	bool success = false;
 	bool numOfStraightEdgesWasOkAtLeastOnce = false;
 
 	for (int rows = 1; rows <= m_numberOfPieces; rows++)
@@ -325,7 +324,7 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 			continue; // no such board exist
 		}
 
-		int columns = m_numberOfPieces / rows;		
+		int columns = m_numberOfPieces / rows;
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
 		if (!IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(rows, columns))
 		{
@@ -335,18 +334,7 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 		numOfStraightEdgesWasOkAtLeastOnce = true;
 
 		// no need to release, as next assignment will free the prev, and the last one will be freed in the dtor
-		m_solution = std::move(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses, m_rotationEnabled));
-
-		success = m_solution->solve();
-
-		if (success)
-		{
-			break;
-		}
-		else
-		{
-			m_solution = nullptr;
-		}
+		m_solutionAttemptsToTry.push_back(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses, m_rotationEnabled));
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
@@ -354,7 +342,62 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 		m_error.setWrongNumberOfStraightEdges();
 	}
 
-	return success;
+	// no need to create all the threads if some will not be used
+	int maxThreadNum = std::max(m_threadCountLimit, (int) m_solutionAttemptsToTry.size());
+
+	//create a number of working threads
+	for (int i=0; i<maxThreadNum; i++)
+	{
+		// Technically a thread might try more then 1 attempt before we create all the threads, thats ok
+		// our protection is in the workerThread method
+		m_threads.push_back(std::thread(&Board::workerThread, this)); 
+	}
+
+	for (std::thread &t : m_threads)
+	{
+		t.join();
+	}
+
+	return isSolutionFound();
+}
+
+bool Board::isSolutionFound()
+{
+	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
+	return !(m_solution == nullptr);
+}
+
+void Board::saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution) //TODO: should this be const ?
+{
+	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
+	m_solution = std::move(solution); // need to use std::move as we have a name for it
+}
+
+void Board::workerThread()
+{
+	while (!isSolutionFound())
+	{
+		std::unique_ptr<RotatableSolution> attempt = nullptr; // every attempt will be freed in each run of the loop
+
+		{
+			std::lock_guard<std::mutex> guard(m_solutionAttemptsToTryMutex); // lock until end of scope
+
+			if (m_solutionAttemptsToTry.size() <= 0)
+			{
+				return;
+			}
+
+			attempt = std::move(m_solutionAttemptsToTry.back()); //take the unique ptr from the vector, now we own it.
+			m_solutionAttemptsToTry.pop_back();// the previous attempt was moved to the vector, and is freed now.
+		}
+
+		bool success = attempt->solve();
+
+		if (success)
+		{
+			saveFoundSolution(std::move(attempt));
+		}
+	}
 }
 
 void Board::writeResponseToFile() const

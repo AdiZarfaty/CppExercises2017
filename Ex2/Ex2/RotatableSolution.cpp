@@ -56,7 +56,7 @@ bool RotatableSolution::solve(int i, int j)
 		PieceRotationContainer tile = *iter;
 
 		// go to the first unused tile
-		if (tile.isUsed())
+		if (isPieceUsed(tile))
 		{			
 			iter++;
 			continue;
@@ -91,7 +91,8 @@ bool RotatableSolution::solve(int i, int j)
 			}
 		}
 
-		tile.setUsed(true); // mark the piece as used
+		
+		setPieceAsUsed(tile, true); // mark the piece as used
 		internalAccessPieceRotationContainer(i, j) = tile; // copy the rotation container to the solution
 
 
@@ -120,7 +121,7 @@ bool RotatableSolution::solve(int i, int j)
 		else
 		{
 			// mark as unsolved (avoid garbage in the solution)
-			internalAccessPieceRotationContainer(i, j).setUsed(false); // mark the piece as unused
+			setPieceAsUsed(internalAccessPieceRotationContainer(i, j), false); // mark the piece as unused
 			internalAccessPieceRotationContainer(i, j).SetPiece(nullptr);
 			iter++;
 		}
@@ -131,10 +132,10 @@ bool RotatableSolution::solve(int i, int j)
 
 #ifdef DEBUG_SHOW_PROGRESS
 time_t global_last_debug_write_to_screen = time(NULL);
+std::mutex global_debug_screen_write_mutex;
 
 string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int pieceTriesCounter, int optionListLength)
 {
-
 	if (m_triedSolutionCounter.size() != (unsigned int)m_heigt) //first run
 	{
 		m_triedSolutionCounter.resize(m_heigt);
@@ -153,11 +154,11 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 	time_t diff = time(NULL) - global_last_debug_write_to_screen; //time(nullptr)->tm_sec - global_last_debug_write_to_screen->tm_sec;
 	if (diff < 2)
 	{
-		return "";
+		return "not enough time passed from last debug print";
 	}
 
-
 	std::stringstream output;
+	output << "thread: " << std::this_thread::get_id() << endl;
 	output << "trying (" << m_heigt << " x " << m_width << ") board" << endl; //debug !
 	output << "pos:(" << posi << "," << posj << ") trying piece " << pieceTriesCounter << " out of " << optionListLength << endl; //debug !
 
@@ -213,18 +214,25 @@ string RotatableSolution::debugGetSolutionAsString(int posi, int posj, int piece
 		output << std::endl;
 	}
 
+	if (global_debug_screen_write_mutex.try_lock()) // allow only 1 writing to the screen
+	{
+		time_t diff = time(NULL) - global_last_debug_write_to_screen; //time(nullptr)->tm_sec - global_last_debug_write_to_screen->tm_sec;
+		if (diff > 2)
+		{
+			// windows clearscreen
+#ifdef WINDOWS
+			std::system("cls");
+#else
+// Assume POSIX
+			std::system("clear");
+#endif
 
-	// windows clearscreen
-	#ifdef WINDOWS
-	std::system("cls");
-	#else
-	// Assume POSIX
-	std::system("clear");
-	#endif
-
-	std::cout << output.str() << endl << std::flush;
-	//update time of last write
-	global_last_debug_write_to_screen = time(NULL);
+			std::cout << output.str() << endl << std::flush;
+			//update time of last write
+			global_last_debug_write_to_screen = time(NULL);
+		}
+		global_debug_screen_write_mutex.unlock();
+	}
 
 	return output.str();
 }

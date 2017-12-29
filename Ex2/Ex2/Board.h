@@ -3,6 +3,9 @@
 #include <sstream>
 #include <list>
 #include <memory>
+#include <thread>
+#include <algorithm>
+#include <mutex>
 #include "Piece.h"
 #include "BoardErrors.h"
 #include "PieceEQClasses.h"
@@ -30,7 +33,16 @@ class Board {
 	vector<Piece> m_allPieces;  // Board is the owner of all the pieces 
 	EQClasses<PieceRotationContainer> m_eqClasses;
 	BoardErrors m_error;
+
+	std::mutex m_solutionMutex;
 	std::unique_ptr<RotatableSolution> m_solution;
+
+	std::mutex m_solutionAttemptsToTryMutex;
+	vector<std::unique_ptr<RotatableSolution>> m_solutionAttemptsToTry;
+
+	int m_threadCountLimit = 4; //TODO: read this number from arguments
+	vector<std::thread> m_threads;
+	
 	int m_numOfStraightEdges = 0; //num of all straight edges in all the pieces
 	int m_sumOfEdges = 0; //the sum of all the edges of all the pieces
 
@@ -38,9 +50,15 @@ class Board {
 	void setEqualityClasses();
 
 	bool IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int columns);
+
+	void workerThread();
+
+	bool isSolutionFound();
+	// Takes ownership on the argument and saves it in m_solution
+	void saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution);
 public:
 	Board(ifstream* inFilePtr, ofstream* outFilePtr, bool rotationEnabled): m_rotationEnabled(rotationEnabled), m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr){
-		m_solution = nullptr;
+		m_solution == nullptr;
 	}
 
 	virtual ~Board() {

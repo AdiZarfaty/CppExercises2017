@@ -31,14 +31,6 @@ public:
 		m_piecePtr = ptr;
 	}
 
-	bool isUsed() const {
-		return m_piecePtr->isUsed();
-	}
-
-	void setUsed(bool val) {
-		m_piecePtr->setUsed(val);
-	}
-
 	int getId() const {
 		return m_piecePtr->getId();
 	}
