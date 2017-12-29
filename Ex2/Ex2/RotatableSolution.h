@@ -9,6 +9,7 @@
 #include <iostream> // for debug
 #include <ctime> // for debug
 #include <math.h> // for debug
+#include <thread> // for write to screen sync in debug
 #include <mutex> // for write to screen sync in debug
 using std::string; // for debug
 using std::cout;
