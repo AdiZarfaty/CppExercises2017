@@ -335,7 +335,7 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 		numOfStraightEdgesWasOkAtLeastOnce = true;
 
 		// no need to release, as next assignment will free the prev, and the last one will be freed in the dtor
-		m_solution = std::move(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses, m_rotationEnabled));
+		m_solution = std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses);
 
 		success = m_solution->solve();
 
