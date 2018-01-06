@@ -29,16 +29,16 @@ bool RotatableSolution::solve(int i, int j)
 		leftFit = -internalGetPieceRotationContainer(i, j - 1).getRight();
 	}
 
-	list<PieceRotationContainer>& optionsList = m_Pieces->getEQClass(leftFit, topFit);
+	auto optionsList = m_Pieces->getEQClass(leftFit, topFit);
 
 	//we keep here a bool if we used a piece with [right edge + 1][bottom edge + 1].
 	//top and left are dictaded from the previous calls to solve(). 
 	//if we tried a type before, no need to try it again.
 	bool triedRightBottomTypes[3][3] = { {false, false, false}, {false, false, false}, {false, false, false} };
 
-	bool success = false;
+	bool success;
 
-	list<PieceRotationContainer>::iterator iter = optionsList.begin();
+	auto iter = optionsList.begin();
 
 	//debug
 	#ifdef DEBUG_SHOW_PROGRESS
