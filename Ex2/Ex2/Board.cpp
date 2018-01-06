@@ -24,6 +24,7 @@ void Board::readBoard() {
 		int sides[4];
 		int id;
 		vector<int> ids(m_numberOfPieces);
+
 		for (int i = 0; i < numElements; i++) {
 			error = false; //error in this specific piece
 			if (m_inFilePtr->eof()) {
@@ -31,7 +32,7 @@ void Board::readBoard() {
 			}
 			getline(*m_inFilePtr, line);
 			ss = stringstream(line);
-			if (line == "") {
+			if (line.empty()) {
 				i--;
 				continue;
 			}
@@ -82,7 +83,7 @@ void Board::readBoard() {
 						break;
 					}
 				}
-				if (!ss.eof() && error == false) {
+				if (!ss.eof() && !error) {
 					string tmp; ss >> tmp;
 					if (!ss.fail()) {
 						m_error.addWrongLine(id, line);
@@ -154,7 +155,7 @@ void Board::readBoard() {
 }
 
 void Board::setNonRotateCornerAsFound(int left, int top, int right, int bottom) {
-	if (m_error.getMissingCorners().size() == 0)
+	if (m_error.getMissingCorners().empty())
 	{
 		return; // no need to run
 	}
@@ -174,9 +175,9 @@ void Board::setNonRotateCornerAsFound(int left, int top, int right, int bottom) 
 		corner = "BR";
 	}
 
-	if (corner != "")
+	if (!corner.empty())
 	{
-		vector<string>::iterator result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
+		auto result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
 		if (result != m_error.getMissingCorners().end())
 		{
 			m_error.getMissingCorners().erase(result);
@@ -218,7 +219,7 @@ void Board::checkCornersExistRotational() {
 }
 
 void Board::setEqualityClasses() {
-	for (vector<Piece>::iterator it = m_allPieces.begin(); it != m_allPieces.end(); ++it) {
+	for (auto it = m_allPieces.begin(); it != m_allPieces.end(); ++it) {
 
 		int maxRotation;
 		if (m_rotationEnabled)
@@ -308,7 +309,7 @@ bool Board::IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int co
 	return true;
 }
 
-bool Board::solve() 
+bool Board::solve()
 {
 	if (m_error.hasErrors())
 	{
@@ -334,7 +335,7 @@ bool Board::solve()
 		numOfStraightEdgesWasOkAtLeastOnce = true;
 
 		// no need to release, as next assignment will free the prev, and the last one will be freed in the dtor
-		m_solutionAttemptsToTry.push_back(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses, m_rotationEnabled));
+		m_solutionAttemptsToTry.push_back(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses));
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
@@ -350,7 +351,7 @@ bool Board::solve()
 	{
 		// Technically a thread might try more then 1 attempt before we create all the threads, thats ok
 		// our protection is in the workerThread method
-		m_threads.push_back(std::thread(&Board::workerThread, this)); 
+		m_threads.push_back(std::thread(&Board::workerThread, this));
 	}
 
 	for (std::thread &t : m_threads)

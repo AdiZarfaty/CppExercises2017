@@ -23,7 +23,6 @@ class RotatableSolution
 {
 	const int m_heigt;
 	const int m_width;
-	bool m_rotationEnabled; //should we try rotation or not
 
 	EQClasses<PieceRotationContainer>* m_Pieces;
 	vector<vector<PieceRotationContainer>> m_puzzleSolution;
@@ -63,7 +62,7 @@ class RotatableSolution
 
 
 public:
-	RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces, bool rotationEnabled) : m_heigt(height), m_width(width), m_rotationEnabled(rotationEnabled), m_Pieces(pieces), m_puzzleSolution(height){
+	RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces) : m_heigt(height), m_width(width), m_Pieces(pieces), m_puzzleSolution(height){
 
 		m_isPieceUsed.resize(height*width, false); // init all pieces as not used
 

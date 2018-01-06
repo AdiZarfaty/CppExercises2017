@@ -40,7 +40,7 @@ class Board {
 	std::mutex m_solutionAttemptsToTryMutex;
 	vector<std::unique_ptr<RotatableSolution>> m_solutionAttemptsToTry;
 
-	int m_threadCountLimit = 4; //TODO: read this number from arguments
+	int m_threadCountLimit;
 	vector<std::thread> m_threads;
 	
 	int m_numOfStraightEdges = 0; //num of all straight edges in all the pieces
@@ -57,8 +57,8 @@ class Board {
 	// Takes ownership on the argument and saves it in m_solution
 	void saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution);
 public:
-	Board(ifstream* inFilePtr, ofstream* outFilePtr, bool rotationEnabled): m_rotationEnabled(rotationEnabled), m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr){
-		m_solution == nullptr;
+	Board(ifstream* inFilePtr, ofstream* outFilePtr, bool rotationEnabled, int threads): m_rotationEnabled(rotationEnabled), m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr), m_threadCountLimit(threads){
+		m_solution = nullptr;
 	}
 
 	virtual ~Board() {

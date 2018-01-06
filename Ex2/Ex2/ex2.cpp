@@ -1,7 +1,4 @@
 #include <iostream>
-#include <iterator>
-#include <string>
-#include <stdexcept>
 #include "Board.h"
 
 using std::cin;
@@ -11,14 +8,30 @@ using std::string;
 using std::getline;
 using std::invalid_argument;
 
+bool isInteger(const std::string & s)
+{
+	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
+
+	char * p ;
+	strtol(s.c_str(), &p, 10) ;
+
+	return (*p == 0) ;
+}
+
 int main(int argc, char *argv[])
 {
 	bool rotate;
 	ifstream inFile;
 	ofstream outFile;
+	int threads = 4;
+
 	// for debug - catch heap corruptions: _CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
-	if (argc > 4) {
-		cerr << "ERROR: expecting at most 3 command line arguments" << endl;
+	if (argc < 3) {
+		cerr << "ERROR: expecting at least 2 command line arguments" << endl;
+		return 0;
+	}
+	if (argc > 6) {
+		cerr << "ERROR: expecting at most 5 command line arguments" << endl;
 			return 0;
 	}
 	if (argc == 3) {
@@ -37,8 +50,26 @@ int main(int argc, char *argv[])
 	else {
 		bool infilefound = false;
 		bool outfilefound = false;
-		for (int i = 1; i < 4; i++) {
-			if (string(argv[i]) != "-rotate") {
+
+		for (int i = 1; i < argc; i++) {
+			if (string(argv[i]) == "-rotate") {
+				rotate = true;
+			} else if (string(argv[i]) == "-threads") {
+				if (i == argc - 1) {
+					cerr << "ERROR: No thread number given after the -threads flag " << endl;
+					return 0;
+				}
+
+				auto nextArg = string(argv[i + 1]);
+
+				if (!isInteger(nextArg)) {
+					cerr << "ERROR: Illegal thread number given: " << nextArg << endl;
+					return 0;
+				}
+
+				threads = stoi(nextArg);
+				i++;
+			} else {
 				if (infilefound)
 				{
 					outFile.open(argv[i]);
@@ -58,16 +89,15 @@ int main(int argc, char *argv[])
 					infilefound = true;
 				}
 			}
-			else {
-				rotate = true;
-			}
 		}
-		if (!infilefound || !outfilefound || !rotate) {
+
+		if (!infilefound || !outfilefound) {
 			cerr << "ERROR: arguments provided are incorrect" << endl;
 			return 0;
 		}
 	}
-	Board board(&inFile, &outFile, rotate);
+
+	Board board(&inFile, &outFile, rotate, threads);
 	board.readBoard();
 	board.solve();
 	board.writeResponseToFile();
