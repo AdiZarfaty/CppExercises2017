@@ -316,7 +316,6 @@ bool Board::solve()
 		return false;
 	}
 
-	bool success = false;
 	bool numOfStraightEdgesWasOkAtLeastOnce = false;
 
 	for (int rows = 1; rows <= m_numberOfPieces; rows++)
@@ -336,18 +335,7 @@ bool Board::solve()
 		numOfStraightEdgesWasOkAtLeastOnce = true;
 
 		// no need to release, as next assignment will free the prev, and the last one will be freed in the dtor
-		m_solution = std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses);
-
-		success = m_solution->solve();
-
-		if (success)
-		{
-			break;
-		}
-		else
-		{
-			m_solution = nullptr;
-		}
+		m_solutionAttemptsToTry.push_back(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses));
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
