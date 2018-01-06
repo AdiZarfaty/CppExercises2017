@@ -24,6 +24,7 @@ void Board::readBoard() {
 		int sides[4];
 		int id;
 		vector<int> ids(m_numberOfPieces);
+
 		for (int i = 0; i < numElements; i++) {
 			error = false; //error in this specific piece
 			if (m_inFilePtr->eof()) {
@@ -31,7 +32,7 @@ void Board::readBoard() {
 			}
 			getline(*m_inFilePtr, line);
 			ss = stringstream(line);
-			if (line == "") {
+			if (line.empty()) {
 				i--;
 				continue;
 			}
@@ -82,7 +83,7 @@ void Board::readBoard() {
 						break;
 					}
 				}
-				if (!ss.eof() && error == false) {
+				if (!ss.eof() && !error) {
 					string tmp; ss >> tmp;
 					if (!ss.fail()) {
 						m_error.addWrongLine(id, line);
@@ -154,7 +155,7 @@ void Board::readBoard() {
 }
 
 void Board::setNonRotateCornerAsFound(int left, int top, int right, int bottom) {
-	if (m_error.getMissingCorners().size() == 0)
+	if (m_error.getMissingCorners().empty())
 	{
 		return; // no need to run
 	}
@@ -174,9 +175,9 @@ void Board::setNonRotateCornerAsFound(int left, int top, int right, int bottom) 
 		corner = "BR";
 	}
 
-	if (corner != "")
+	if (!corner.empty())
 	{
-		vector<string>::iterator result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
+		auto result = std::find(m_error.getMissingCorners().begin(), m_error.getMissingCorners().end(), corner);
 		if (result != m_error.getMissingCorners().end())
 		{
 			m_error.getMissingCorners().erase(result);
@@ -218,7 +219,7 @@ void Board::checkCornersExistRotational() {
 }
 
 void Board::setEqualityClasses() {
-	for (vector<Piece>::iterator it = m_allPieces.begin(); it != m_allPieces.end(); ++it) {
+	for (auto it = m_allPieces.begin(); it != m_allPieces.end(); ++it) {
 
 		int maxRotation;
 		if (m_rotationEnabled)
@@ -354,7 +355,62 @@ bool Board::solve()
 		m_error.setWrongNumberOfStraightEdges();
 	}
 
-	return success;
+	// no need to create all the threads if some will not be used
+	int maxThreadNum = std::max(m_threadCountLimit, (int) m_solutionAttemptsToTry.size());
+
+	//create a number of working threads
+	for (int i=0; i<maxThreadNum; i++)
+	{
+		// Technically a thread might try more then 1 attempt before we create all the threads, thats ok
+		// our protection is in the workerThread method
+		m_threads.push_back(std::thread(&Board::workerThread, this));
+	}
+
+	for (std::thread &t : m_threads)
+	{
+		t.join();
+	}
+
+	return isSolutionFound();
+}
+
+bool Board::isSolutionFound()
+{
+	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
+	return !(m_solution == nullptr);
+}
+
+void Board::saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution) //TODO: should this be const ?
+{
+	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
+	m_solution = std::move(solution); // need to use std::move as we have a name for it
+}
+
+void Board::workerThread()
+{
+	while (!isSolutionFound())
+	{
+		std::unique_ptr<RotatableSolution> attempt = nullptr; // every attempt will be freed in each run of the loop
+
+		{
+			std::lock_guard<std::mutex> guard(m_solutionAttemptsToTryMutex); // lock until end of scope
+
+			if (m_solutionAttemptsToTry.size() <= 0)
+			{
+				return;
+			}
+
+			attempt = std::move(m_solutionAttemptsToTry.back()); //take the unique ptr from the vector, now we own it.
+			m_solutionAttemptsToTry.pop_back();// the previous attempt was moved to the vector, and is freed now.
+		}
+
+		bool success = attempt->solve();
+
+		if (success)
+		{
+			saveFoundSolution(std::move(attempt));
+		}
+	}
 }
 
 void Board::writeResponseToFile() const
