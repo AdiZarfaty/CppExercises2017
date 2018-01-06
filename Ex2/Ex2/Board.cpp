@@ -308,7 +308,7 @@ bool Board::IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(int rows, int co
 	return true;
 }
 
-bool Board::solve() //TODO: consider building frame first. need to tweek solve(i,j) as well to check if fits to right and bottom (if they are filled)
+bool Board::solve()
 {
 	if (m_error.hasErrors())
 	{
@@ -325,7 +325,7 @@ bool Board::solve() //TODO: consider building frame first. need to tweek solve(i
 			continue; // no such board exist
 		}
 
-		int columns = m_numberOfPieces / rows;		
+		int columns = m_numberOfPieces / rows;
 		// this helps us avoid trying a solution that is impossible, we are requiered to report it by note 6
 		if (!IsEnoughEdgesAndCornersAvailableToTrySolutionOfSize(rows, columns))
 		{

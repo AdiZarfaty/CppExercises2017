@@ -11,7 +11,7 @@ CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 
 
 $(EXEC): $(OBJS)
-	$(COMP) $(OBJS) -o ex2
+	$(COMP) -pthread $(OBJS) -o ex2
 #a rule for building a simple c++ source file
 #use g++ -MM ex2.cpp to see dependencies
 

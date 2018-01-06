@@ -7,11 +7,9 @@ class Piece {
 	const short m_top;
 	const short m_right;
 	const short m_bottom;
-	bool m_used;
 public:
 	Piece(int id, short left, short top, short right, short bottom):
 		m_id(id), m_left(left), m_top(top), m_right(right), m_bottom(bottom){
-		m_used = false;
 	}
 
 	int getId() const {
@@ -31,12 +29,4 @@ public:
 	}
 
 	short getFace(int i) const;
-
-	bool isUsed() const{
-		return m_used;
-	}
-
-	void setUsed(bool val) {
-		m_used = val;
-	}
 };
