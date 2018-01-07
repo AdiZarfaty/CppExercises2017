@@ -2,6 +2,7 @@
 #include "PieceEQClasses.h"
 #include "PieceRotationContainer.h"
 #include <vector>
+#include "SolutionFoundChecker.h"
 
 #ifdef DEBUG_SHOW_PROGRESS
 #include <string> //for debug
@@ -23,6 +24,7 @@ class RotatableSolution
 {
 	const int m_heigt;
 	const int m_width;
+	SolutionFoundChecker* m_solutionWasAlreadyFound_ptr;
 
 	EQClasses<PieceRotationContainer>* m_Pieces;
 	vector<vector<PieceRotationContainer>> m_puzzleSolution;
@@ -62,7 +64,7 @@ class RotatableSolution
 
 
 public:
-	RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces) : m_heigt(height), m_width(width), m_Pieces(pieces), m_puzzleSolution(height){
+	RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces, SolutionFoundChecker* solFoundCheck) : m_heigt(height), m_width(width), m_solutionWasAlreadyFound_ptr(solFoundCheck), m_Pieces(pieces), m_puzzleSolution(height){
 
 		m_isPieceUsed.resize(height*width, false); // init all pieces as not used
 

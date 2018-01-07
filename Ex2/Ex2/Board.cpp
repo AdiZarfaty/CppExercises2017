@@ -316,6 +316,9 @@ bool Board::solve()
 		return false;
 	}
 
+	m_solutionWasAlreadyFoundObj = SolutionFoundCheckerOfBoard(this);
+	SolutionFoundChecker* sfc = &m_solutionWasAlreadyFoundObj;
+
 	bool numOfStraightEdgesWasOkAtLeastOnce = false;
 
 	for (int rows = 1; rows <= m_numberOfPieces; rows++)
@@ -335,7 +338,7 @@ bool Board::solve()
 		numOfStraightEdgesWasOkAtLeastOnce = true;
 
 		// no need to release, as next assignment will free the prev, and the last one will be freed in the dtor
-		m_solutionAttemptsToTry.push_back(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses));
+		m_solutionAttemptsToTry.push_back(std::make_unique<RotatableSolution>(rows, columns, &m_eqClasses, sfc));
 	}
 
 	if (!numOfStraightEdgesWasOkAtLeastOnce)
@@ -344,7 +347,7 @@ bool Board::solve()
 	}
 
 	// no need to create all the threads if some will not be used
-	int maxThreadNum = std::max(m_threadCountLimit, (int) m_solutionAttemptsToTry.size());
+	int maxThreadNum = std::min(m_threadCountLimit, (int) m_solutionAttemptsToTry.size());
 
 	//create a number of working threads
 	for (int i=0; i<maxThreadNum; i++)
@@ -364,6 +367,11 @@ bool Board::solve()
 
 bool Board::isSolutionFound()
 {
+	if (!m_solutionFoundHint) // avoid locking the mutex (double checked lock pattern)
+	{
+		return false;
+	}
+
 	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
 	return !(m_solution == nullptr);
 }
@@ -372,6 +380,7 @@ void Board::saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution) //T
 {
 	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
 	m_solution = std::move(solution); // need to use std::move as we have a name for it
+	m_solutionFoundHint = true;
 }
 
 void Board::workerThread()
@@ -394,7 +403,7 @@ void Board::workerThread()
 
 		bool success = attempt->solve();
 
-		if (success)
+		if (success && !isSolutionFound()) // in case 2 threads found a solution, ignore the second
 		{
 			saveFoundSolution(std::move(attempt));
 		}

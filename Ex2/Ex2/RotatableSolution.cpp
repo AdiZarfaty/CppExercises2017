@@ -111,6 +111,12 @@ bool RotatableSolution::solve(int i, int j)
 			int nextj = (j + 1) % m_width; // at m_width go back to 0
 			int nexti = i + ((j + 1) / m_width);
 
+			// before calling recursion - check if someone else found the solution
+			if (m_solutionWasAlreadyFound_ptr->isSolutionFound())
+			{
+				return false; // end the recursion, no need to run
+			}
+
 			success = solve(nexti, nextj);
 		}
 		if (success)

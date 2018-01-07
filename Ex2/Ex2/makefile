@@ -1,7 +1,7 @@
 COMP = g++-5.3.0
 #g++-5.3.0
 #put all your object files here
-OBJS = Board.o BoardErrors.o ex2.o Piece.o PieceEQClasses.o RotatableSolution.o PieceRotationContainer.o
+OBJS = Board.o BoardErrors.o ex2.o Piece.o PieceEQClasses.o RotatableSolution.o PieceRotationContainer.o SolutionFoundChecker.o
 
 #The executabel filename DON'T CHANGE
 EXEC = ex2
@@ -14,6 +14,9 @@ $(EXEC): $(OBJS)
 	$(COMP) -pthread $(OBJS) -o ex2
 #a rule for building a simple c++ source file
 #use g++ -MM ex2.cpp to see dependencies
+
+SolutionFoundChecker.o: SolutionFoundChecker.h
+	$(COMP) $(CPP_COMP_FLAG) -c  SolutionFoundChecker.cpp
 
 Board.o: Board.cpp Board.h Piece.h BoardErrors.h PieceEQClasses.h RotatableSolution.h PieceRotationContainer.h
 	$(COMP) $(CPP_COMP_FLAG) -c Board.cpp

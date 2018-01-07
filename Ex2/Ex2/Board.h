@@ -11,6 +11,7 @@
 #include "PieceEQClasses.h"
 #include "RotatableSolution.h"
 #include "PieceRotationContainer.h"
+#include "SolutionFoundChecker.h"
 
 using std::vector;
 using std::string;
@@ -22,6 +23,25 @@ using std::cerr;
 using std::to_string;
 
 class Board {
+	// this class allows Solution to ask board if a solution was found, without disrupting the dependencies
+	class SolutionFoundCheckerOfBoard : public SolutionFoundChecker
+	{
+		Board * m_board;
+	public:
+		SolutionFoundCheckerOfBoard() : SolutionFoundCheckerOfBoard(nullptr) { }
+		SolutionFoundCheckerOfBoard(Board* b) : m_board(b) { }
+
+		bool isSolutionFound() override
+		{
+			if (m_board == nullptr)
+			{ 
+				return false;
+			}
+
+			return m_board->isSolutionFound();
+		}
+	};
+
 	bool m_rotationEnabled; //should we try rotation or not
 	int m_numOfStraightEdges_right = 0;
 	int m_numOfStraightEdges_left = 0;
@@ -36,6 +56,7 @@ class Board {
 
 	std::mutex m_solutionMutex;
 	std::unique_ptr<RotatableSolution> m_solution;
+	bool m_solutionFoundHint; // this bool will help us avoid using the lock all the time;
 
 	std::mutex m_solutionAttemptsToTryMutex;
 	vector<std::unique_ptr<RotatableSolution>> m_solutionAttemptsToTry;
@@ -45,6 +66,8 @@ class Board {
 	
 	int m_numOfStraightEdges = 0; //num of all straight edges in all the pieces
 	int m_sumOfEdges = 0; //the sum of all the edges of all the pieces
+
+	SolutionFoundCheckerOfBoard m_solutionWasAlreadyFoundObj;
 
 	// fill the EQClasses with the pieces
 	void setEqualityClasses();
@@ -57,8 +80,11 @@ class Board {
 	// Takes ownership on the argument and saves it in m_solution
 	void saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution);
 public:
+
+
 	Board(ifstream* inFilePtr, ofstream* outFilePtr, bool rotationEnabled, int threads): m_rotationEnabled(rotationEnabled), m_inFilePtr(inFilePtr), m_outFilePtr(outFilePtr), m_threadCountLimit(threads){
 		m_solution = nullptr;
+		m_solutionFoundHint = false;
 	}
 
 	virtual ~Board() {
