@@ -1,5 +1,18 @@
 #include "RotatableSolution.h"
 
+RotatableSolution::RotatableSolution(int height, int width, EQClasses<PieceRotationContainer>* pieces, SolutionFoundChecker* solFoundCheck) : m_heigt(height), m_width(width), m_solutionWasAlreadyFound_ptr(solFoundCheck), m_Pieces(pieces), m_puzzleSolution(height) {
+
+	m_isPieceUsed.resize(height*width, false); // init all pieces as not used
+
+	// setup an empty board
+	for (int i = 0; i < m_heigt; i++)
+	{
+		m_puzzleSolution[i].resize(m_width);
+		for (int j = 0; j < m_width; j++) {
+			internalAccessPieceRotationContainer(i, j).SetPiece(nullptr);
+		}
+	}
+}
 
 bool RotatableSolution::solve()
 {

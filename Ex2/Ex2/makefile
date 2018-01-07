@@ -1,19 +1,19 @@
 COMP = g++-5.3.0
 #g++-5.3.0
 #put all your object files here
-OBJS = Board.o BoardErrors.o ex2.o Piece.o PieceEQClasses.o RotatableSolution.o PieceRotationContainer.o SolutionFoundChecker.o
+OBJS = Board.o BoardErrors.o ex3.o Piece.o PieceEQClasses.o RotatableSolution.o PieceRotationContainer.o SolutionFoundChecker.o
 
 #The executabel filename DON'T CHANGE
-EXEC = ex2
+EXEC = ex3
 
 CPP_COMP_FLAG = -std=c++14 -Wall -Wextra \
 -Werror -pedantic-errors -DNDEBUG
 
 
 $(EXEC): $(OBJS)
-	$(COMP) -pthread $(OBJS) -o ex2
+	$(COMP) -pthread $(OBJS) -o ex3
 #a rule for building a simple c++ source file
-#use g++ -MM ex2.cpp to see dependencies
+#use g++ -MM ex3.cpp to see dependencies
 
 SolutionFoundChecker.o: SolutionFoundChecker.h
 	$(COMP) $(CPP_COMP_FLAG) -c  SolutionFoundChecker.cpp
@@ -24,8 +24,8 @@ Board.o: Board.cpp Board.h Piece.h BoardErrors.h PieceEQClasses.h RotatableSolut
 BoardErrors.o: BoardErrors.cpp BoardErrors.h
 	$(COMP) $(CPP_COMP_FLAG) -c BoardErrors.cpp
 
-ex2.o: ex2.cpp Board.h
-	$(COMP) $(CPP_COMP_FLAG) -c ex2.cpp
+ex3.o: ex3.cpp Board.h
+	$(COMP) $(CPP_COMP_FLAG) -c ex3.cpp
 
 PieceRotationContainer.o: PieceRotationContainer.cpp PieceRotationContainer.h Piece.h
 	$(COMP) $(CPP_COMP_FLAG) -c PieceRotationContainer.cpp

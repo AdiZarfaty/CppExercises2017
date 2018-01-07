@@ -376,7 +376,7 @@ bool Board::isSolutionFound()
 	return !(m_solution == nullptr);
 }
 
-void Board::saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution) //TODO: should this be const ?
+void Board::saveFoundSolution(std::unique_ptr<RotatableSolution>&& solution)
 {
 	std::lock_guard<std::mutex> guard(m_solutionMutex); // lock until end of scope
 	m_solution = std::move(solution); // need to use std::move as we have a name for it
