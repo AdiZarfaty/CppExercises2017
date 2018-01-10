@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include "TypesMap.h"
 
 using std::cout;
 using std::endl;
@@ -30,7 +31,8 @@ public:
 		va_end(args);
 	}
 
-	string getType() const {
+	string getType() {
+		// TODO
 		return to_string(sides[0]) + " " + to_string(sides[1]) + " " + to_string(sides[2]) + " " + to_string(sides[3]);
 	}
 
@@ -67,20 +69,15 @@ public:
 	}
 };
 
-template<typename Iterator>
-auto groupPuzzlePieces(Iterator begin, Iterator end) {
+template<class T>
+auto groupPuzzlePieces(T begin, T end) {
+	TypesMap<typename T::value_type> m;
+
 	for (; begin != end; begin++) {
-		auto pi = *begin;
-		cout << "s ";
-
-		for (const auto &i: pi) {
-			cout << i << ", ";
-		}
-
-		cout << endl;
+		m.addPiece(&(*begin));
 	}
 
-	return "test";
+	return m;
 }
 
 #endif //EX4_PIECE_H

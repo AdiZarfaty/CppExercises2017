@@ -17,7 +17,8 @@ int main() {
 
 	std::list<Puzzle2dPiece<5>> pieces = {{0, 3, 2, -5}, {0, -2, 2, -5}};
 
-	groupPuzzlePieces(pieces.begin(), pieces.end());
+	auto groups = groupPuzzlePieces(pieces.begin(), pieces.end());
+	auto somePieces = groups.get({0, std::numeric_limits<int>::min(), 2, -5});
 
 	return 0;
 }
