@@ -6,12 +6,14 @@
 #define EX4_PIECE_H
 
 #include <string>
+#include <ostream>
 #include <iostream>
 #include "TypesMap.h"
 
 using std::cout;
 using std::endl;
 using std::string;
+using std::ostream;
 using std::to_string;
 
 template <size_t S = 4, int K = 1>
@@ -32,8 +34,17 @@ public:
 	}
 
 	string getType() {
-		// TODO
-		return to_string(sides[0]) + " " + to_string(sides[1]) + " " + to_string(sides[2]) + " " + to_string(sides[3]);
+		string res = "";
+
+		for (int i = 0; i < S; i++) {
+			res += to_string(sides[i]);
+
+			if (i < S - 1) {
+				res += ", ";
+			}
+		}
+
+		return res;
 	}
 
 	class iterator {
@@ -66,6 +77,12 @@ public:
 
 	iterator end() {
 		return iterator(this, S);
+	}
+
+	friend ostream &operator<<(ostream & os, Piece<S, K> p) {
+		os << "{" << p.getType() << "}" << endl;
+
+		return os;
 	}
 };
 
