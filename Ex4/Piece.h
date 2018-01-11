@@ -47,6 +47,10 @@ public:
 		return res;
 	}
 
+	int getRange() {
+		return K;
+	}
+
 	class iterator {
 	private:
 		Piece *piece;
@@ -66,7 +70,7 @@ public:
 			return *this;
 		}
 
-		int operator*() {
+		int& operator*() {
 			return piece->sides[_side];
 		}
 	};
@@ -80,7 +84,7 @@ public:
 	}
 
 	friend ostream &operator<<(ostream & os, Piece<S, K> p) {
-		os << "{" << p.getType() << "}" << endl;
+		os << "{" << p.getType() << "}";
 
 		return os;
 	}

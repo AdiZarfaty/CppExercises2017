@@ -42,12 +42,35 @@ void TypesMap<Piece>::addPiece(Piece * piece) {
 
 template <class Piece>
 std::vector<Piece*> TypesMap<Piece>::get(Piece constraints) {
-	// TODO
+	std::vector<Piece*> res;
+
 	if (_types.empty()) {
-		return std::vector<Piece*>();
+		return res;
 	}
 
-	return _types.begin()->second;
+	for (auto it = constraints.begin(); it != constraints.end(); ++it) {
+		if (*it == std::numeric_limits<int>::min()) {
+			for (int k = -constraints.getRange(); k <= constraints.getRange(); k++) {
+				*it = k;
+
+				auto tmp = get(constraints);
+
+				if (!tmp.empty()) {
+					res.insert(res.end(), tmp.begin(), tmp.end());
+				}
+			}
+
+			return res;
+		}
+	}
+
+	auto type = constraints.getType();
+
+	if (_types.find(type) != _types.end()) {
+		return _types[type];
+	}
+
+	return res;
 }
 
 #endif //EX4_TYPESMAP_H
