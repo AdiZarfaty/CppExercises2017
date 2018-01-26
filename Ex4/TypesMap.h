@@ -11,6 +11,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include <limits>
 
 using std::map;
 using std::list;

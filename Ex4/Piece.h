@@ -9,6 +9,7 @@
 #include <ostream>
 #include <iostream>
 #include "TypesMap.h"
+#include <stdarg.h>
 
 using std::cout;
 using std::endl;
