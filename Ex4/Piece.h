@@ -16,7 +16,7 @@ using std::string;
 using std::ostream;
 using std::to_string;
 
-template <size_t S = 4, int K = 1>
+template <int S = 4, int K = 1>
 class Piece {
 public:
 	int sides[S];

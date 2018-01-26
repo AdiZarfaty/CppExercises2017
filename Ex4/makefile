@@ -1,7 +1,7 @@
 COMP = g++
 #g++-5.3.0
 #put all your object files here
-OBJS = Puzzle2dPiece.o Puzzle3dPiece.o Piece.o TypesMap.o main.o
+OBJS = Puzzle2dPiece.o Puzzle3dPiece.o TypesMap.o main.o
 
 #The executabel filename DON'T CHANGE
 EXEC = ex4
@@ -20,9 +20,6 @@ Puzzle2dPiece.o: Puzzle2dPiece.cpp Puzzle2dPiece.h Piece.h
 
 Puzzle3dPiece.o: Puzzle3dPiece.cpp Puzzle3dPiece.h Piece.h
 	$(COMP) $(CPP_COMP_FLAG) -c Puzzle3dPiece.cpp
-
-Piece.o: Piece.cpp Piece.h TypesMap.h
-	$(COMP) $(CPP_COMP_FLAG) -c Piece.cpp
 
 TypesMap.o: TypesMap.cpp TypesMap.h
 	$(COMP) $(CPP_COMP_FLAG) -c TypesMap.cpp
