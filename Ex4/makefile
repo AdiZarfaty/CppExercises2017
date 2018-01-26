@@ -1,5 +1,4 @@
-COMP = g++
-#g++-5.3.0
+COMP = g++-5.3.0
 #put all your object files here
 OBJS = Puzzle2dPiece.o Puzzle3dPiece.o TypesMap.o main.o
 
