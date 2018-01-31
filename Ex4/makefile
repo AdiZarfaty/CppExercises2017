@@ -23,7 +23,7 @@ Puzzle3dPiece.o: Puzzle3dPiece.cpp Puzzle3dPiece.h Piece.h
 TypesMap.o: TypesMap.cpp TypesMap.h
 	$(COMP) $(CPP_COMP_FLAG) -c TypesMap.cpp
 
-main.o: main.cpp Puzzle2dPiece.h Puzzle3dPiece.h
+main.o: main.cpp ex4headers.h
 	$(COMP) $(CPP_COMP_FLAG) -c main.cpp
 
 

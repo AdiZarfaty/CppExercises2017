@@ -23,7 +23,7 @@ template <int S = 4, int K = 1>
 class Piece {
 private:
 	inline void checkSide(int side) {
-		if (side < -K || side > K) {
+		if ((side < -K || side > K) && (side != std::numeric_limits<int>::min())) {
 			throw std::runtime_error("Face out of range [-" + to_string(K) + ", " + to_string(K) + "]: " + to_string(side));
 		}
 	}
