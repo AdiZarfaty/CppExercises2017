@@ -6,10 +6,12 @@
 #define EX4_PIECE_H
 
 #include <string>
+#include <cstdarg>
 #include <ostream>
 #include <iostream>
+#include <stdexcept>
+
 #include "TypesMap.h"
-#include <stdarg.h>
 
 using std::cout;
 using std::endl;
@@ -19,17 +21,26 @@ using std::to_string;
 
 template <int S = 4, int K = 1>
 class Piece {
+private:
+	inline void checkSide(int side) {
+		if (side < -K || side > K) {
+			throw std::runtime_error("Face out of range [-" + to_string(K) + ", " + to_string(K) + "]: " + to_string(side));
+		}
+	}
 public:
 	int sides[S];
 
 	Piece(int first, ...)
 	{
 		sides[0] = first;
+		checkSide(sides[0]);
+
 		va_list args;
 
 		va_start(args, first);
 		for (auto i = 1; i < S; i++) {
 			sides[i] = va_arg(args, int);
+			checkSide(sides[i]);
 		}
 		va_end(args);
 	}
