@@ -15,6 +15,7 @@
 
 using std::map;
 using std::list;
+using std::vector;
 using std::string;
 using std::cout;
 using std::endl;
@@ -41,6 +42,13 @@ void TypesMap<Piece>::addPiece(Piece * piece) {
 	_types[type].push_back(piece);
 }
 
+/**
+ * Recursively replace the wildcard piece faces, and concatenating all relevant piece shapes
+ *
+ * @tparam constraints - The desired piece shape, using std::numeric_limits<int>::min as a wild card
+ * @param constraints
+ * @return std::vector of Piece
+ */
 template <class Piece>
 std::vector<Piece*> TypesMap<Piece>::get(Piece constraints) {
 	std::vector<Piece*> res;
@@ -52,12 +60,12 @@ std::vector<Piece*> TypesMap<Piece>::get(Piece constraints) {
 	for (auto it = constraints.begin(); it != constraints.end(); ++it) {
 		if (*it == std::numeric_limits<int>::min()) {
 			for (int k = -constraints.getRange(); k <= constraints.getRange(); k++) {
-				*it = k;
+				*it = k; // replace wildcard with current tested value
 
-				auto tmp = get(constraints);
+				auto tmp = get(constraints); // recursive call
 
 				if (!tmp.empty()) {
-					res.insert(res.end(), tmp.begin(), tmp.end());
+					res.insert(res.end(), tmp.begin(), tmp.end()); // concatenate all relevant shapes
 				}
 			}
 
@@ -65,6 +73,7 @@ std::vector<Piece*> TypesMap<Piece>::get(Piece constraints) {
 		}
 	}
 
+	// No wildcards found, just return the relevant shape
 	auto type = constraints.getType();
 
 	if (_types.find(type) != _types.end()) {
